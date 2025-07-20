@@ -5,6 +5,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
+import appWindow.AppPanel;
 import stryckyzzzComponents.StryckyzzzClasses.StryckyzzzTextArea;
 
 import javax.swing.JSplitPane;
@@ -33,7 +34,7 @@ public class Tabs extends JComponent {
 	 * Instantiate the tabs using JTabbedPane, handles panels, you should reload the panels first and not the JTabbedPane
 	 * @param appPanel
 	 */
-	public Tabs(JPanel appPanel) {
+	public Tabs(AppPanel appPanel) {
 		tabbedPane = new JTabbedPane();
 	    
 		overviewTab = new JPanel();
@@ -55,7 +56,7 @@ public class Tabs extends JComponent {
 	    splitpane = new JSplitPane();
 	    exploringTab.add(splitpane);
 	    
-	    appPanel.add(tabbedPane, BorderLayout.CENTER);
+	    appPanel.add(tabbedPane, BorderLayout.WEST);
 	}
 	
 	public void reloadText() {

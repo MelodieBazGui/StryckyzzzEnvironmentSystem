@@ -9,5 +9,15 @@
 	<classpathentry kind="src" path="lib"/>
 	<classpathentry kind="src" path="files"/>
 	<classpathentry kind="src" path="StryckyzzzUtils"/>
+	<classpathentry kind="lib" path="lib/JOGL/jar/gluegen.jar" sourcepath="lib/JOGL/src/gluegen-java-src.zip">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/JOGL/jar/jogl-all.jar" sourcepath="lib/JOGL/src/jogl-java-src.zip">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

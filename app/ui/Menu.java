@@ -17,6 +17,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JFrame;
 
+import appWindow.AppPanel;
 import appWindow.EnvironmentApplication;
 import stryckyzzzComponents.StryckyzzzClasses.StryckyzzzTextArea;
 
@@ -47,7 +48,7 @@ public class Menu extends JComponent {
      * <p>
      * @param pa
      */
-    public Menu(JPanel pa) {
+    public Menu(AppPanel appPanel) {
     	
         menuBar = new JMenuBar();
 
@@ -91,7 +92,7 @@ public class Menu extends JComponent {
                     public void actionPerformed(ActionEvent e) {
                     	EnvironmentApplication.changeDefaultLang(s + ".txt");
                     	EnvironmentApplication.LL.loadLanguage();
-                    	EnvironmentApplication.reloadUIs();
+                    	appPanel.reloadUIs();
                     	dialog.dispose();
                     }
                 });
@@ -103,7 +104,7 @@ public class Menu extends JComponent {
             dialog = new JDialog(EnvironmentApplication.frame, EnvironmentApplication.LL.getSingle("menu.lang"), true);
             dialog.getContentPane().add(langPanel);
             dialog.pack();
-            dialog.setLocationRelativeTo(pa);
+            dialog.setLocationRelativeTo(appPanel);
             dialog.setVisible(true);
         });
         

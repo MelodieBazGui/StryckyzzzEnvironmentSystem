@@ -1,6 +1,6 @@
 # StryckyzzzEnvironmentSystem
 
-Welcome to **StryckyzzzEnvironmentSystem** — a creative tool developed by **EmeJay Bazeries Guilbault** (aka *Stryckoeurzzz*) to help you build, explore, and interact with virtual environments.
+Welcome to **StryckyzzzEnvironmentSystem** — a creative tool developed by **EmeJay Bazeries Guilbault** (and *Stryckoeurzzz*) to help you build, explore, and interact with virtual environments.
 
 ## ✨ Features
 - [Feature 1]

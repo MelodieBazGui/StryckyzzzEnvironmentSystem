@@ -45,6 +45,7 @@ public class LanguageLoader extends DataHandler {
         
         logger.logInfo("Exploring : " + langDir.getAbsolutePath());
         //listFiles(langDir);
+        //i have no idea when i added that into a commentary and what i wanted to do with it
         if(langDir.exists() && langDir.isDirectory()) {
         	exploreLang(langDir);
         } else {

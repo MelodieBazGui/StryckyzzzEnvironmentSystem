@@ -18,7 +18,8 @@ public class EnvironmentApplication {
 	
 	public static final String NAME = "StryckyzzzEnvironmentSystem";
 	public static final String VERSION = "V0.1-indev";
-	private static final JPanel appPanel = new JPanel();
+	private static final JPanel appPanel = new JPanel(new BorderLayout());
+	public static JPanel appPanelCenter = new JPanel();
 	
 	public static StryckyzzzTextAreas STAS ;
 	public static LanguageLoader LL;
@@ -27,8 +28,6 @@ public class EnvironmentApplication {
 	
     public static String defaultLang = "en_EN.txt";
 	
-	private static Menu menu;
-	private static Tabs tabs;
 	
 	public static JFrame frame = new JFrame(NAME);
 	
@@ -38,8 +37,6 @@ public class EnvironmentApplication {
 		LL = new LanguageLoader();
 		IMGH = new IMGHandler();
 		logger.logInfo("Initialized app");
-        addMenu();
-        addTabs();
 	}
 	
 	/**
@@ -59,45 +56,12 @@ public class EnvironmentApplication {
         logger.logDuration(logger.getFileName());
     }
     
-    public static JPanel reloadUIs() {
-        if (appPanel == null) {
-            throw new IllegalStateException("Frame is not initialized!");
-        }
-        appPanel.removeAll();
-        appPanel.revalidate();
-        appPanel.repaint();
-
-        addMenu();
-        addTabs();
-        
-        logger.logInfo("Reloaded UI components");
-        return appPanel;
-    }
-    
     public static String getDefaultLang() {
     	return defaultLang;
     }
     
     public static void changeDefaultLang(String s) {
     	defaultLang = s;
-    }
-    
-    public static Menu getMenu() {
-        return menu;
-    }
-
-    public static Tabs getTabs() {
-        return tabs;
-    }
-    
-    private static void addMenu() {
-    	menu = new Menu(appPanel);
-        logger.logInfo("Created menu");
-    }
-    
-    private static void addTabs() {
-    	tabs = new Tabs(appPanel);
-        logger.logInfo("Created tabs");
     }
     
 }
