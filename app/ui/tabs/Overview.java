@@ -1,7 +1,6 @@
 package ui.tabs;
 
 import javax.swing.JComponent;
-import javax.swing.JPanel;
 
 class Overview extends JComponent {
 

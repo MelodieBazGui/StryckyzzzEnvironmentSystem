@@ -1,6 +1,6 @@
 package appWindow;
 
-import java.awt.Component;
+import java.awt.BorderLayout;
 
 import javax.swing.JPanel;
 
@@ -10,14 +10,20 @@ import utils.Logger;
 
 public class AppPanel extends JPanel{
 
-	private static JPanel appPanel;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -9069657847861666301L;
+	
 	private static Logger logger;
 
 	private static Menu menu;
 	private static Tabs tabs;
+
+	private JPanel appPanel;
 	
 	public AppPanel() {
-		appPanel = new JPanel();
+		appPanel = new JPanel(new BorderLayout());
 		logger = new Logger(this.getClass());
 		init();
 		logger.logInfo("Instantied Class");
@@ -26,16 +32,14 @@ public class AppPanel extends JPanel{
 	private void init() {
         addMenu();
         addTabs();
+        setVisible(true);
         logger.logInfo("Initiated Content for AppPanel");
 	}
 	
 	public void reloadUIs() {
-        if (appPanel == null) {
-            throw new IllegalStateException("Frame is not initialized!");
-        }
-        appPanel.removeAll();
-        appPanel.revalidate();
-        appPanel.repaint();
+        removeAll();
+        revalidate();
+        repaint();
 
         addMenu();
         addTabs();
@@ -57,7 +61,8 @@ public class AppPanel extends JPanel{
     }
     
     private void addTabs() {
-    	tabs = new Tabs(this);
+    	tabs = new Tabs(appPanel);
+    	this.add(tabs);
         logger.logInfo("Created tabs");
     }
 	

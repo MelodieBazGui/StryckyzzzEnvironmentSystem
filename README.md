@@ -3,9 +3,11 @@
 Welcome to **StryckyzzzEnvironmentSystem** — a creative tool developed by **EmeJay Bazeries Guilbault** (and *Stryckoeurzzz*) to help you build, explore, and interact with virtual environments.
 
 ## ✨ Features
-- [Feature 1]
+- Language file and language handling
 - [Feature 2]
 - [Feature 3]
+
+Yet nothing is plainly implemented
 
 ## 🚀 Getting Started
 To install and run the project:
@@ -39,6 +41,8 @@ This project is licensed under the **StryckyzzzEnvironmentSystem Public Use Lice
 📩 For companies or commercial licensing inquiries, please contact: **emejay.b.g@gmail.com**
 
 For full license terms, see the [`PROJECT_LICENSE.md`](./PROJECT_LICENSE.md).
+
+For JOAL's Licence terms, [`see the JOAL_LICENSE.md`](./JOAL_LICENSE.md).
 
 ## 🤝 Contributing
 

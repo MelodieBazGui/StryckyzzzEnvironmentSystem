@@ -11,11 +11,6 @@ import StryckyzzzInterfaces.Reloadable;
 
 public class StryckyzzzTextAreas implements Reloadable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1776423224064589713L;
-
 	private HashMap<Component, List<StryckyzzzTextArea>> staMap;
 
 	private List<StryckyzzzTextArea> staList;

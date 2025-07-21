@@ -1,5 +1,5 @@
 menu.file=Fichier
-menu.exit=die the death
+menu.exit=Quitter
 menu.help=Aide
 menu.about=A Propos
 menu.menuName=Menu

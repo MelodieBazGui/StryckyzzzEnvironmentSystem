@@ -86,7 +86,7 @@ public class Menu extends JComponent {
             List<JButton> jbuttonList = new ArrayList<>();
 
             EnvironmentApplication.LL.getLangs().forEach((s) -> {
-                JButton langButton = new JButton(new StryckyzzzTextArea(s).getText());
+                JButton langButton = new JButton(new StryckyzzzTextArea("lang." + s).getText());
                 langButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
