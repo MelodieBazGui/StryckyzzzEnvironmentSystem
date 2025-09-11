@@ -4,7 +4,7 @@ Welcome to **StryckyzzzEnvironmentSystem** — a creative tool developed by **Em
 
 ## ✨ Features
 - Language file and language handling
-- [Feature 2]
+- Functionnal 3D space engine
 - [Feature 3]
 
 Yet nothing is plainly implemented
