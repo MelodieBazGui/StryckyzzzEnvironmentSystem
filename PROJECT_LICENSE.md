@@ -1,93 +1,122 @@
-# StryckyzzzEnvironmentSystem Public Use License (v1.1)
+StryckyzzzEnvironmentSystem License (Dual-License v3.1)
 
-**Copyright © EmeJay Bazeries Guilbault**  
-**Creator Alias:** Stryckoeurzzz  
-**Contact Email:** emejay.b.g@gmail.com  
-**Effective Date:** 07/06/2025
+Copyright © 2025
+EmeJay Bazeries Guilbault (alias Stryckoeurzzz)
+Contact: emejay.b.g@gmail.com
 
----
+Effective Date: July 6, 2025
 
-## 1. Definitions
+1. Definitions
 
-**"Software"** refers to the StryckyzzzEnvironmentSystem, including its code, structure, assets, and documentation.  
-**"You" / "User"** refers to any individual or entity using the Software.  
-**"Derivative Work"** refers to original creations built using or inspired by the Software.  
-**"Commercial Use"** means any use intended for commercial advantage, financial gain, or monetization.  
-**"Small Entity"** means individuals, students, educators, artists, or teams with annual gross revenue under $100,000 USD.
+“Software”: The StryckyzzzEnvironmentSystem, including but not limited to source code, binaries, assets, and any documentation prepared by the Licensor.
 
----
+“Licensor”: EmeJay Bazeries Guilbault, also known as Stryckoeurzzz.
 
-## 2. Grant of Use
+“User” / “You”: Any person or organization making use of the Software under this License.
 
-You are granted a royalty-free, non-exclusive, non-transferable, revocable license to use, access, and interact with the Software for personal, educational, artistic, or small-scale creative purposes, under the following terms.
+“Derivative Work”: Any project or material that incorporates, adapts, or modifies the Software in whole or in part.
 
----
+“Commercial Use”: Use of the Software tied to revenue, whether direct or indirect — for instance SaaS, licensing, product sales, or paid services.
 
-## 3. Permitted Uses
+“Small Entity”: An individual, student, educator, artist, or group with annual revenue below USD $100,000.
 
-You **may**:
-- Use the Software for personal, educational, and creative purposes.
-- Share, demonstrate, or publish media created with the Software.
-- Create Derivative Works based on the Software.
-- Distribute and monetize Derivative Works **only if**:
-  - You are a Small Entity.
-  - The value lies primarily in your added content, not the Software itself.
-  - You do not include the Software itself as a core or redistributable component.
+2. License Model
 
----
+This License operates under a dual-license scheme:
 
-## 4. Prohibited Uses
+Community License (Sections 3–6): Free to use for Small Entities and non-commercial activity.
 
-You **may not**:
-- Sell, license, rent, sublicense, or redistribute the Software, in whole or part.
-- Include the Software in any product or service where it forms a core feature or is necessary for functionality.
-- Copy, repackage, modify, or rebrand the Software for distribution.
-- Use the Software in any context where its value is the primary reason for monetization.
+Commercial License (Section 7): Required for all other usage.
 
----
+By using the Software, you accept either the Community License or, where it applies, the Commercial License.
 
-## 5. Commercial Licensing
+3. Community License Grant
 
-For use in commercial projects or by organizations not qualifying as Small Entities, you **must** obtain a commercial license.
+For those who qualify, the Licensor provides a non-exclusive, worldwide, royalty-free, revocable license to:
 
-📧 **To inquire**, contact: emejay.b.g@gmail.com
+Use the Software for personal projects, research, education, or creative/artistic work.
 
----
+Develop, adapt, and share Derivative Works, as long as:
 
-## 6. Termination
+You fall under the definition of a Small Entity.
 
-Any violation of this license automatically terminates your rights under it. Upon termination, you must cease all use and distribution of the Software and Derivative Works that include it.
+The core value of what you distribute comes from your own contribution, not just the Software.
 
----
+The Software is not redistributed as a standalone product or as the primary engine.
 
-## 7. No Warranty
+4. Restrictions (Community License)
 
-The Software is provided “as is,” without warranty of any kind, express or implied. The author disclaims all liability for any damages resulting from use or misuse of the Software.
+Under the Community License, you must not:
 
----
+Sell, sublicense, rent, or otherwise distribute the Software in its original form.
 
-## 8. Governing Law
+Include it as an indispensable part of a product or service.
 
-This license shall be governed by and construed in accordance with the laws of France.  
-All legal disputes arising from this license shall be subject to the exclusive jurisdiction of the courts of France.
+Rebrand or repackage the Software as if it were your own.
 
-This license shall be interpreted and enforced under the laws of France. Nothing in this license shall be construed as a waiver of the author's moral rights as defined by French Intellectual Property Code (Code de la propriété intellectuelle).
----
+Monetize projects with it unless you are clearly a Small Entity.
 
-## 9. Summary (Non-Legal)
+5. Attribution
 
-✔️ You can:
-- Use this tool freely for personal and creative purposes.
-- Share or sell your creations made with it, if you're a small creator.
+If you distribute a Derivative Work, you are required to:
 
-❌ You cannot:
-- Sell or repackage the tool itself.
-- Include it in a product you're selling unless you have a commercial license.
+State plainly that it uses or is based on the StryckyzzzEnvironmentSystem.
 
----
+Provide a reference or link back to this License.
 
-## Version
+6. Termination (Community License)
 
-**License Version:** 1.1  
-**License Author:** EmeJay Bazeries Guilbault (Stryckoeurzzz)  
-**Contact:** emejay.b.g@gmail.com  
+Violation of these terms results in the immediate termination of the Community License. If this occurs, you must stop all use and distribution of both the Software and any related Derivative Works.
+
+7. Commercial License
+
+If you are not a Small Entity, or if your use is commercial in nature, you must secure a separate Commercial License Agreement from the Licensor.
+
+7.1 Rights Granted
+
+After payment and agreement, the Licensor provides a non-exclusive, worldwide license to:
+
+Use the Software within commercial projects or services.
+
+Modify and create Derivative Works.
+
+Distribute or sublicense the Software, but only within the terms of the Commercial License.
+
+7.2 Fees and Terms
+
+The price, scope of rights, and support conditions are negotiated directly between the Licensor and the Licensee in writing.
+Failure to meet payment obligations results in immediate termination of the Commercial License.
+
+📧 Inquiries: emejay.b.g@gmail.com
+
+8. Third-Party Licenses
+
+This License applies only to components authored by the Licensor.
+
+Some parts of the Software may depend on external libraries (e.g., JOGL). Those remain under their own terms. This License does not override them. Where a conflict exists, the third-party license governs for that portion.
+
+9. Disclaimer of Warranty
+
+The Software is provided “AS IS”. No guarantees are offered — neither express nor implied — including merchantability, fitness for a particular purpose, or protection against infringement.
+
+10. Limitation of Liability
+
+The Licensor is not responsible for any loss or damages — whether direct, indirect, incidental, or consequential — that may arise from using the Software.
+
+11. Governing Law
+
+This License falls under the jurisdiction of French law.
+Disputes are subject to the exclusive authority of the courts of France.
+The Licensor’s moral rights, as recognized by the French Intellectual Property Code, remain reserved.
+
+12. Quick Summary (Non-Binding)
+
+ Free for individuals, students, educators, artists, and small creators (< $100k/year).
+
+ You’re allowed to build, adapt, and share works using it.
+
+ You cannot resell, redistribute, or repackage the Software itself.
+
+ Larger companies and commercial users must negotiate a paid license.
+
+ Dependencies like JOGL carry their own license obligations.
