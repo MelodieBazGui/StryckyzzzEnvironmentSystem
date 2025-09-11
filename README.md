@@ -14,7 +14,7 @@ To install and run the project:
 
 ```bash
 # Example installation steps
-git clone https://github.com/Stryckoeurz/StryckyzzzEnvironmentSystem.git
+git clone https://github.com/MelodieBazGui/StryckyzzzEnvironmentSystem.git
 cd StryckyzzzEnvironmentSystem
 [run command or build instructions]
 ```
