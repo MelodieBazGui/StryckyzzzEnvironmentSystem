@@ -2,13 +2,15 @@ package math;
 
 import java.util.ArrayList;
 
+import bodies.Shape;
+
 public final class GJK {
     private static final int MAX_IT = 20;
 
     // Minkowski support: supportA(dir) - supportB(-dir)
     private static Vec3 support(Shape a, Shape b, Vec3 dir, Quat aOri, Vec3 aPos, Quat bOri, Vec3 bPos){
         // transform dir into local space? We assume support returns in local space - transform by orientation
-        Vec3 dirA_world = dir.copy(); // direction in world
+        Vec3 dirA_world = dir.cpy(); // direction in world
         // For shape support we need to convert direction to local space of each shape: since shapes store local points,
         // we can rotate the world dir by inverse rotation (quat conjugate for unit quat)
         // but for simplicity, we will evaluate support by rotating points inside shape classes (they expect body-space).

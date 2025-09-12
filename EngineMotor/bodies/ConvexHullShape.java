@@ -1,6 +1,8 @@
 package bodies;
 
 import java.util.List;
+import math.*;
+
 
 //simple convex hull defined by point list in local space
 public final class ConvexHullShape implements Shape {
@@ -16,7 +18,7 @@ public final class ConvexHullShape implements Shape {
          float val = p.dot(dir);
          if(val > best){ best = val; bestP = p; }
      }
-     return bestP.copy();
+     return bestP.cpy();
  }
  @Override public AABB computeAABB(Quat orientation, Vec3 position){
      // rotate all points, collect min/max

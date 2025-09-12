@@ -78,4 +78,10 @@ public class Vec3 {
         return String.format("(%.3f, %.3f, %.3f)", x, y, z);
     }
 
+    public void set(float x, float y, float z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+
 }

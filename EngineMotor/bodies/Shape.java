@@ -1,6 +1,6 @@
 package bodies;
 
-import math.Quat;
+import math.*;
 
 //Shape.java
 public interface Shape {

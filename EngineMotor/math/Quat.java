@@ -1,5 +1,7 @@
 package math;
 
+import engine.Mat3;
+
 public final class Quat {
  private float w, x, y, z;
  public Quat(){ setIdentity(); }

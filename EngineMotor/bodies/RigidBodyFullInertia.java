@@ -1,6 +1,7 @@
 package bodies;
 
 import math.* ;
+import engine.Mat3;
 
 public final class RigidBodyFullInertia {
     private final int id;
@@ -35,10 +36,10 @@ public final class RigidBodyFullInertia {
 
     public int getId(){ return id; }
     public float getInvMass(){ return invMass; }
-    public Vec3 getPosition(){ return position.copy(); }
+    public Vec3 getPosition(){ return position.cpy(); }
     public Quat getOrientation(){ return orientation; } // Quat is mutable; if you want immutability copy it
-    public Vec3 getVelocity(){ return velocity.copy(); }
-    public Vec3 getOmega(){ return omega.copy(); }
+    public Vec3 getVelocity(){ return velocity.cpy(); }
+    public Vec3 getOmega(){ return omega.cpy(); }
     public Shape getShape(){ return shape; }
 
     // Apply impulse (linear + angular), using full inertia world inverse
