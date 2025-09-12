@@ -9,12 +9,18 @@
 	<classpathentry kind="src" path="lib"/>
 	<classpathentry kind="src" path="files"/>
 	<classpathentry kind="src" path="StryckyzzzUtils"/>
+	<classpathentry kind="src" path="EngineMotor"/>
 	<classpathentry kind="lib" path="lib/JOGL/jar/gluegen.jar" sourcepath="lib/JOGL/src/gluegen-java-src.zip">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/JOGL/jar/jogl-all.jar" sourcepath="lib/JOGL/src/jogl-java-src.zip">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
