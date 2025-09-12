@@ -12,7 +12,7 @@ public final class SphereShape implements Shape {
         return AABB.fromSphere(position, radius);
     }
 }
-package shape;
+package bodies;
 
 public class SphereShape {
 
