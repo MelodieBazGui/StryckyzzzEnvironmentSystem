@@ -1,4 +1,4 @@
-package Engine;
+package math;
 
 public class Vec3 {
 	
