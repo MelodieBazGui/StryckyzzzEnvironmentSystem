@@ -96,27 +96,40 @@ public class DynamicAABBTree {
     }
 
     // return set of candidate pairs (each pair only once)
-    public synchronized List<int[]> queryAllPairs(){
+    public List<int[]> queryAllPairs() {
         List<int[]> pairs = new ArrayList<>();
+        if (root == null) return pairs;
+
+        Set<Long> seen = new HashSet<>();
         List<Node> leaves = new ArrayList<>(leafMap.values());
-        // naive: for each leaf, query overlaps with others via tree query excluding itself
-        for(int i=0;i<leaves.size();i++){
+
+        for (int i = 0; i < leaves.size(); i++) {
             Node a = leaves.get(i);
-            queryOverlap(root, a, pairs, i+1);
+            // check overlap with all other leaves via tree
+            queryOverlap(root, a, pairs, seen);
         }
         return pairs;
     }
 
-    // helper: query tree for overlaps between 'a' and nodes; ensure pair only added once by index threshold
-    private void queryOverlap(Node node, Node a, List<int[]> out, int startIndex){
-        if(node == null || node == a) return;
-        if(!node.aabb.overlaps(a.aabb)) return;
-        if(node.leaf()){
-            if(node != a){ out.add(new int[]{a.id, node.id}); }
-            return;
+    // Traverse tree and add unique pairs
+    private void queryOverlap(Node node, Node a, List<int[]> out, Set<Long> seen) {
+        if (node == null || node == a) return;
+        if (!node.aabb.overlaps(a.aabb)) return;
+
+        if (node.leaf()) {
+            if (node != a) {
+                int id1 = Math.min(a.id, node.id);
+                int id2 = Math.max(a.id, node.id);
+                long key = (((long) id1) << 32) | (id2 & 0xffffffffL);
+
+                if (seen.add(key)) { // add only if new
+                    out.add(new int[]{id1, id2});
+                }
+            }
+        } else {
+            queryOverlap(node.left, a, out, seen);
+            queryOverlap(node.right, a, out, seen);
         }
-        queryOverlap(node.left, a, out, startIndex);
-        queryOverlap(node.right, a, out, startIndex);
     }
 
     private static AABB unionAABB(AABB a, AABB b){
@@ -128,6 +141,7 @@ public class DynamicAABBTree {
                             Math.max(a.getMax().getZ(), b.getMax().getZ()));
         return new AABB(min, max);
     }
+    
     private static float unionPerimeter(AABB a, AABB b){
         AABB u = unionAABB(a,b);
         Vec3 min = u.getMin(), max = u.getMax();

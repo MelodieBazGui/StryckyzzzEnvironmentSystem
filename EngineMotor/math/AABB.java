@@ -29,4 +29,25 @@ public final class AABB {
         Vec3 m = new Vec3(margin, margin, margin);
         return new AABB(Vec3.sub(min, m), Vec3.add(max, m));
     }
+    
+    /**
+     * Checks whether a point lies inside (or on the boundary of) this AABB.
+     */
+    public boolean contains(Vec3 p) {
+        return contains(p.getX(), p.getY(), p.getZ());
+    }
+
+    /**
+     * Faster overload, avoids creating Vec3s.
+     */
+    public boolean contains(float x, float y, float z) {
+        return (x >= min.getX() && x <= max.getX()) &&
+               (y >= min.getY() && y <= max.getY()) &&
+               (z >= min.getZ() && z <= max.getZ());
+    }
+
+    @Override
+    public String toString() {
+        return "AABB[min=" + min + ", max=" + max + "]";
+    }
 }

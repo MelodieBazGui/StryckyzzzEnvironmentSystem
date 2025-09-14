@@ -8,8 +8,6 @@ import engine.Contact;
 import math.Vec3;
 import org.junit.jupiter.api.*;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class ContactTest {
 
     private Contact contact;

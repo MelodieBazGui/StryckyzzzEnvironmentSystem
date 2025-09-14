@@ -1,7 +1,7 @@
 package bodies;
 
+import engine.IdGenerator;
 import math.* ;
-import engine.Mat3;
 
 public final class RigidBodyFullInertia {
     private final int id;
@@ -13,12 +13,28 @@ public final class RigidBodyFullInertia {
 
     private final Shape shape;
 
-    // body-space inertia and its inverse (immutable after construction unless user calls setInertia)
-    private Mat3 inertiaBody;        // I_body
-    private Mat3 inertiaBodyInv;     // I_body_inv
+    private Mat3 inertiaBody;
+    private Mat3 inertiaBodyInv;
+    private Mat3 inertiaWorldInv;
 
-    // world-space inverse inertia cache (updated on demand)
-    private Mat3 inertiaWorldInv;    // I_world_inv
+    public RigidBodyFullInertia(Shape shape, Vec3 pos, Quat ori, float mass) {
+        this.id = IdGenerator.nextId();
+        this.shape = shape;
+        this.position.set(pos);
+        this.orientation.set(ori);
+
+        if (mass <= 0f) {
+            this.invMass = 0f;
+            this.inertiaBody = Mat3.identity();     // or Mat3.zero()
+            this.inertiaBodyInv = Mat3.identity();
+        } else {
+            this.invMass = 1.0f / mass;
+            this.inertiaBody = shape.computeInertia(mass);
+            this.inertiaBodyInv = (inertiaBody != null) ? inertiaBody.inverse() : Mat3.identity();
+        }
+
+        updateInertiaWorld();
+    }
 
     public RigidBodyFullInertia(int id, float mass, Vec3 pos, Quat ori, Shape shape, Mat3 inertiaBody){
         this.id = id;
@@ -37,7 +53,7 @@ public final class RigidBodyFullInertia {
     public int getId(){ return id; }
     public float getInvMass(){ return invMass; }
     public Vec3 getPosition(){ return position.cpy(); }
-    public Quat getOrientation(){ return orientation; } // Quat is mutable; if you want immutability copy it
+    public Quat getOrientation(){ return orientation; }
     public Vec3 getVelocity(){ return velocity.cpy(); }
     public Vec3 getOmega(){ return omega.cpy(); }
     public Shape getShape(){ return shape; }

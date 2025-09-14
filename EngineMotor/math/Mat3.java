@@ -1,6 +1,6 @@
-package engine;
+package math;
 
-import math.*;
+import java.util.Locale;
 
 /**
  * High-performance 3x3 matrix class for physics/math.
@@ -47,6 +47,14 @@ public final class Mat3 {
         return new Mat3().setIdentity();
     }
 
+    public static Mat3 diag(float xx, float yy, float zz) {
+        return new Mat3 (new float[] {
+        		xx,0,0,
+        		0,yy,0,
+        		0,0,zz
+        });
+    }
+    
     public Mat3 setIdentity() {
         m[0] = 1; m[1] = 0; m[2] = 0;
         m[3] = 0; m[4] = 1; m[5] = 0;
@@ -184,11 +192,25 @@ public final class Mat3 {
             xz - wy,         yz + wx,          1f - (xx + yy)
         });
     }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Mat3)) return false;
+        Mat3 m = (Mat3) o;
+        float eps = 1e-6f;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (Math.abs(this.get(i,j) - m.get(i,j)) > eps) return false;
+            }
+        }
+        return true;
+    }
 
     @Override
     public String toString() {
-        return String.format(
-            "[[%.3f, %.3f, %.3f], [%.3f, %.3f, %.3f], [%.3f, %.3f, %.3f]]",
+        return String.format(Locale.getDefault(),
+            "[[%.3f, %.3f, %.3f]\n [% .3f, %.3f, %.3f]\n [% .3f, %.3f, %.3f]]",
             m[0], m[1], m[2],
             m[3], m[4], m[5],
             m[6], m[7], m[8]

@@ -1,5 +1,7 @@
 package math;
 
+import java.util.Locale;
+
 public class Vec3 {
 	
     private float x, y, z;
@@ -61,6 +63,15 @@ public class Vec3 {
     	return new Vec3(y*o.z - z*o.y, z*o.x - x*o.z, x*o.y - y*o.x); 
     	}
     
+    public Vec3 neg() {
+        return new Vec3(-x, -y, -z);
+    }
+    
+    /** Static helper: returns a new Vec3 that is the negation of v (does NOT mutate v). */
+    public static Vec3 neg(Vec3 v) {
+        return new Vec3(-v.getX(), -v.getY(), -v.getZ());
+    }
+    
     public float len2(){ 
     	return x*x + y*y + z*z; 
     	}
@@ -73,15 +84,35 @@ public class Vec3 {
     	float l = len(); if(l>1e-8f) scl(1.0f/l); return this; 
     	}
     
-    @Override
-    public String toString() {
-        return String.format("(%.3f, %.3f, %.3f)", x, y, z);
-    }
-
     public void set(float x, float y, float z) {
         this.x = x;
         this.y = y;
         this.z = z;
     }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Vec3)) return false;
+        Vec3 v = (Vec3) o;
+        float eps = 1e-6f;
+        return Math.abs(this.getX() - v.getX()) < eps &&
+               Math.abs(this.getY() - v.getY()) < eps &&
+               Math.abs(this.getZ() - v.getZ()) < eps;
+    }
 
+    @Override
+    public int hashCode() {
+        int result = Float.hashCode(Math.round(getX() * 1e6f));
+        result = 31 * result + Float.hashCode(Math.round(getY() * 1e6f));
+        result = 31 * result + Float.hashCode(Math.round(getZ() * 1e6f));
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return String.format(Locale.getDefault(), "(%.3f, %.3f, %.3f)", x, y, z);
+    }
+
+    
 }
