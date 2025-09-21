@@ -1,4 +1,6 @@
-package math;
+package math.algorithm;
+
+import math.Vec3;
 
 public final class AABB {
     private final Vec3 min;

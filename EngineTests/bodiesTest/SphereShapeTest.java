@@ -2,6 +2,8 @@ package bodiesTest;
 
 import bodies.SphereShape;
 import math.*;
+import math.algorithm.AABB;
+
 import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;

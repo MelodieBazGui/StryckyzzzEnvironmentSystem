@@ -2,6 +2,8 @@ package bodiesTest;
 
 import bodies.*;
 import math.*;
+import math.algorithm.AABB;
+
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

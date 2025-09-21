@@ -1,6 +1,7 @@
 package mathTest;
 
 import math.*;
+import math.algorithm.AABB;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;

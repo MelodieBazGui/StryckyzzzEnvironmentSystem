@@ -1,6 +1,7 @@
 package bodies;
 
 import math.*;
+import math.algorithm.AABB;
 
 //Shape.java
 public interface Shape {

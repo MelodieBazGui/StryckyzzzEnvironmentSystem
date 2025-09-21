@@ -1,7 +1,9 @@
-package math;
+package math.algorithm;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import math.Vec3;
 
 /**
  A simple dynamic AABB tree. It stores leaf nodes (bodyId -> AABB) and allows

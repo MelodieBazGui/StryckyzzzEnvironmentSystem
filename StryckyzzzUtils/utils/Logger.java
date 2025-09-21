@@ -1,6 +1,10 @@
 package utils;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -25,30 +29,35 @@ public class Logger {
 	public Logger(Class<?> c) {
         this.className = c.getName();
         this.startTime = System.currentTimeMillis();
-        this.logFile = createLogFile();
-        resetLogFile();
+        createLogFile();
         logInfo("Generated LogFile for the following class : " + c.getName());
     }
 
-    private File createLogFile() {
-        File baseDir = new File(System.getProperty("user.dir"), "logs");
-        String[] parts = className.split("\\.");
-        String simpleClassName = parts[parts.length - 1];
+    private void createLogFile() {
+    	
+    		File baseDir = new File(System.getProperty("user.dir"), "logs");
+            String[] parts = className.split("\\.");
+            String simpleClassName = parts[parts.length - 1];
 
-        File logDir = baseDir;
-        for (int i = 0; i < parts.length - 1; i++) {
-            logDir = new File(logDir, parts[i]);
-        }
-        if (!logDir.exists()) {
-            logDir.mkdirs();
-        }
-        return new File(logDir, simpleClassName + "_log.txt");
+            File logDir = baseDir;
+            for (int i = 0; i < parts.length - 1; i++) {
+                logDir = new File(logDir, parts[i]);
+            }
+            if (!logDir.exists()) {
+                logDir.mkdirs();
+            }
+            logFile = new File(logDir, simpleClassName + "_log.txt");
+            try {
+            	logFile.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
     }
 
     public void resetLogFile() {
         try (FileWriter writer = new FileWriter(logFile, false)) {
             writer.write("");
-            System.out.println("Reset log file: " + logFile.getAbsolutePath());
+            System.out.println("Reset log file: " + logFile);
         } catch (IOException e) {
             System.err.println("Failed to reset log file: " + e.getMessage());
         }

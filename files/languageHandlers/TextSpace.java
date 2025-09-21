@@ -1,4 +1,4 @@
-package LibraryClasses;
+package languageHandlers;
 
 public class TextSpace {
     private String text;

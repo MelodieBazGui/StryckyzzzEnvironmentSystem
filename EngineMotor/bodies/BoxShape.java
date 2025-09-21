@@ -1,6 +1,8 @@
 package bodies;
 
 import math.*;
+import math.algorithm.AABB;
+import utils.Logger;
 
 /**
  * Axis-aligned box in local space, centered at origin.
@@ -9,10 +11,14 @@ import math.*;
 public class BoxShape implements Shape {
     private final Vec3 halfExtents;
 
-    public BoxShape(Vec3 v) { halfExtents = v;};
+    private Logger log;
+    
+    public BoxShape(Vec3 v) { halfExtents = v;
+    log.logInfo("Instanciated BoxShape from a vector");};
     
     public BoxShape(float hx, float hy, float hz) {
         this.halfExtents = new Vec3(hx, hy, hz);
+        log.logInfo("Instanciated BoxShape from floating point values");
     }
 
     @Override
@@ -50,7 +56,6 @@ public class BoxShape implements Shape {
             }
         }
 
-        // transform to world and compute min/max
         float minX = Float.POSITIVE_INFINITY, minY = Float.POSITIVE_INFINITY, minZ = Float.POSITIVE_INFINITY;
         float maxX = Float.NEGATIVE_INFINITY, maxY = Float.NEGATIVE_INFINITY, maxZ = Float.NEGATIVE_INFINITY;
 

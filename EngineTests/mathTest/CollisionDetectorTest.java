@@ -1,6 +1,8 @@
 package mathTest;
 
 import math.*;
+import math.absurd.CollisionDetector;
+import math.algorithm.EPA;
 import bodies.SphereShape;
 
 import org.junit.jupiter.api.Test;

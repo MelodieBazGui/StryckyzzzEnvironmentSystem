@@ -1,6 +1,9 @@
 package mathTest;
 
 import math.*;
+import math.algorithm.AABB;
+import math.algorithm.DynamicAABBTree;
+
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 

@@ -1,4 +1,4 @@
-package LibraryClasses;
+package languageHandlers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,7 +13,7 @@ public class Library {
         this.lang = lang;
     }
 
-    public String getLang() {
+	public String getLang() {
     	return lang;
     }
     

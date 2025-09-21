@@ -3,11 +3,7 @@ package languageHandlers;
 import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import LibraryClasses.Library;
-import LibraryClasses.Shelf;
-import LibraryClasses.TextSpace;
-import appWindow.EnvironmentApplication;
+import appWindow.Application;
 import basicHandler.DataHandler;
 import utils.LogLevel;
 import utils.Logger;
@@ -30,7 +26,7 @@ public class LanguageLoader extends DataHandler {
     public File langDir = new File(langDirectory);
     
     public LanguageLoader() {
-        this.translations = new Library(EnvironmentApplication.defaultLang);
+        this.translations = new Library(Application.defaultLang);
         this.txtspaces = new ArrayList<>();
         logger.log(LogLevel.INFO, "Initializing LanguageLoader...", null);
         loadLanguage();
@@ -38,10 +34,10 @@ public class LanguageLoader extends DataHandler {
     }
     
     public void loadLanguage() {
-    	if(translations.getLang() != EnvironmentApplication.getDefaultLang()) {
+    	if(translations.getLang() != Application.getDefaultLang()) {
             translations.clear();
     	}
-        logger.logInfo("Attempting to load language: " + EnvironmentApplication.getDefaultLang());
+        logger.logInfo("Attempting to load language: " + Application.getDefaultLang());
         
         logger.logInfo("Exploring : " + langDir.getAbsolutePath());
         //listFiles(langDir);
@@ -74,7 +70,7 @@ public class LanguageLoader extends DataHandler {
 				logger.logInfo("Exploring lang directory : " + f.getName());
 				exploreLang(f1);
 			}
-		} else if (f.isFile() && f.getName().equals(EnvironmentApplication.getDefaultLang())) {
+		} else if (f.isFile() && f.getName().equals(Application.getDefaultLang())) {
     		loadLanguageFile(f);
     	}
     }
@@ -124,7 +120,7 @@ public class LanguageLoader extends DataHandler {
 
     private void reloadAllLanguageMethods() {
         logger.logInfo("Reloading language across all STAs...");
-        EnvironmentApplication.STAS.reload();
+        Application.reloadLanguage();
         logger.logDuration(logger.getFileName());
     }
     

@@ -1,6 +1,8 @@
-package math;
+package math.algorithm;
 
 import bodies.Shape;
+import math.Quat;
+import math.Vec3;
 
 import java.util.ArrayList;
 import java.util.List;

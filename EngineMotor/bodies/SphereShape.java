@@ -1,6 +1,7 @@
 package bodies;// SphereShape.java
 
 import math.*;
+import math.algorithm.AABB;
 
 public final class SphereShape implements Shape {
 	private final Vec3 center;

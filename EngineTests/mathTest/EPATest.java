@@ -1,6 +1,8 @@
 package mathTest;
 
 import math.*;
+import math.algorithm.EPA;
+import math.algorithm.GJK;
 import bodies.SphereShape;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;

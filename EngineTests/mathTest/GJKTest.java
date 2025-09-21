@@ -2,6 +2,8 @@ package mathTest;
 
 import bodies.*;
 import math.*;
+import math.algorithm.GJK;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
