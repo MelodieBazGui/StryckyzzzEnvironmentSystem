@@ -30,7 +30,7 @@ public class Logger {
         this.className = c.getName();
         this.startTime = System.currentTimeMillis();
         createLogFile();
-        logInfo("Generated LogFile for the following class : " + c.getName());
+        logInfo("Logger instantiated for : " + c.getName());
     }
 
     private void createLogFile() {
