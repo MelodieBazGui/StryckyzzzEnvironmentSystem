@@ -10,7 +10,8 @@
 	<classpathentry kind="src" path="files"/>
 	<classpathentry kind="src" path="StryckyzzzUtils"/>
 	<classpathentry kind="src" path="EngineMotor"/>
-	<classpathentry kind="src" path="EngineTests"/>
+	<classpathentry kind="src" path="mathematics"/>
+	<classpathentry kind="src" path="tests"/>
 	<classpathentry kind="lib" path="lib/JOGL/jar/gluegen.jar" sourcepath="lib/JOGL/src/gluegen-java-src.zip">
 		<attributes>
 			<attribute name="module" value="true"/>

@@ -1,2 +1,5 @@
 /bin/
 /logs/
+/apis/
+*.classpath
+*.project
