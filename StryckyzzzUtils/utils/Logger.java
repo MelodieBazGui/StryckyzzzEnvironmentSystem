@@ -1,138 +1,103 @@
 package utils;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.LinkOption;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
-import java.util.LinkedList;
 
 /**
- * This was me fighting for my life trying to have a logger i can use to store data in files rather than in my console
- * @author Stryckoeurzzz
+ * Aggressive Logger with class-based tagging and colored console output.
+ * Each log line can include the specific object instance for readability.
  */
 public class Logger {
+    private final String classTag;
+    private final File logFile;
 
-	private static List<File> logPath = new LinkedList<File>();
-	private static String className;
-    private static long startTime;
-    
-	private File logFile;
-	private long timerStart;
-	private Object ms;
-	private Object seconds;
-	private long elapsedMillis;
-    
-	public Logger(Class<?> c) {
-        this.className = c.getName();
-        this.startTime = System.currentTimeMillis();
-        createLogFile();
-        logInfo("Logger instantiated for : " + c.getName());
+    // ANSI Colors for console
+    private static final String RESET  = "\u001B[0m";
+    private static final String RED    = "\u001B[31m";
+    private static final String YELLOW = "\u001B[33m";
+    private static final String GREEN  = "\u001B[32m";
+    private static final String CYAN   = "\u001B[36m";
+
+    public Logger(Class<?> c) {
+        this.classTag = c.getSimpleName();
+        this.logFile = createLogFile(c);
     }
 
-    private void createLogFile() {
-    	
-    		File baseDir = new File(System.getProperty("user.dir"), "logs");
-            String[] parts = className.split("\\.");
-            String simpleClassName = parts[parts.length - 1];
-
-            File logDir = baseDir;
-            for (int i = 0; i < parts.length - 1; i++) {
-                logDir = new File(logDir, parts[i]);
-            }
-            if (!logDir.exists()) {
-                logDir.mkdirs();
-            }
-            logFile = new File(logDir, simpleClassName + "_log.txt");
-            try {
-            	logFile.createNewFile();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-    }
-
-    public void resetLogFile() {
-        try (FileWriter writer = new FileWriter(logFile, false)) {
-            writer.write("");
-            System.out.println("Reset log file: " + logFile);
+    private File createLogFile(Class<?> c) {
+        File baseDir = new File(System.getProperty("user.dir"), "logs");
+        if (!baseDir.exists() && !baseDir.mkdirs()) {
+            System.err.println("Logger: could not create logs directory");
+        }
+        File file = new File(baseDir, c.getSimpleName() + "_log.txt");
+        try {
+            file.createNewFile();
         } catch (IOException e) {
-            System.err.println("Failed to reset log file: " + e.getMessage());
+            System.err.println("Failed to create log file: " + e.getMessage());
         }
+        return file;
     }
 
-    public synchronized void log(LogLevel level, String context, Exception e) {
-        String logEntry = buildLogEntry(level, context, e);
-        writeToFile(logEntry);
+    // Convenience overloads so callers can attach the concrete object
+    public void info(String msg) {
+        log(LogLevel.INFO, msg, null, null);
     }
 
-    public void logInfo(String context) {
-        log(LogLevel.INFO, context, null);
+    public void info(String msg, Object obj) {
+        log(LogLevel.INFO, msg, obj, null);
     }
 
-    public void logWarn(String context, Exception e) {
-        log(LogLevel.WARN, context, null);
+    public void warn(String msg) {
+        log(LogLevel.WARN, msg, null, null);
     }
 
-    public void logError(String context, Exception e) {
-        log(LogLevel.ERROR, context, e);
-    }
-    
-    public String getFileName() {
-    	return className;
+    public void warn(String msg, Object obj) {
+        log(LogLevel.WARN, msg, obj, null);
     }
 
-    public void startTimer() {
-        timerStart = System.currentTimeMillis();
+    public void error(String msg, Throwable t) {
+        log(LogLevel.ERROR, msg, null, t);
     }
 
-    public void endTimer(String label) {
-        elapsedMillis = System.currentTimeMillis() - timerStart;
-        seconds = elapsedMillis / 1000;
-        ms = elapsedMillis % 1000;
-        logInfo(label + " completed in " + seconds + "." + String.format("%03d", ms) + "s");
-    }
-    
-    public void logDuration(String label) {
-        elapsedMillis = System.currentTimeMillis() - startTime;
-        seconds = elapsedMillis / 1000;
-        ms = elapsedMillis % 1000;
-        logInfo(label + " completed in " + seconds + "." + String.format("%03d", ms) + "s");
+    public void error(String msg, Object obj, Throwable t) {
+        log(LogLevel.ERROR, msg, obj, t);
     }
 
-    private static String buildLogEntry(LogLevel level, String context, Exception e) {
-        String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-        StringBuilder sb = new StringBuilder();
-        sb.append("[").append(timestamp).append("] ")
-          .append(level).append(" - ").append(context);
-        if (e != null) {
-            sb.append(" | Exception: ").append(e.getClass().getSimpleName()).append(" - ").append(e.getMessage());
-            for (StackTraceElement el : e.getStackTrace()) {
-                sb.append("\n    at ").append(el.toString());
+    private synchronized void log(LogLevel level, String msg, Object obj, Throwable t) {
+        String timestamp = new SimpleDateFormat("HH:mm:ss.SSS").format(new Date());
+        String objTag = "";
+        if (obj != null) {
+            objTag = String.format("[%s@%08x]", obj.getClass().getSimpleName(), System.identityHashCode(obj));
+        }
+        String entry = String.format("[%s] [%s] %s %s", timestamp, classTag, level, msg);
+        String consoleLine = String.format("[%s] [%s] %s %s %s",
+                timestamp, classTag, level, msg, objTag);
+
+        // Console colorized
+        switch (level) {
+            case INFO  -> System.out.println(GREEN  + consoleLine + RESET);
+            case WARN  -> System.out.println(YELLOW + consoleLine + RESET);
+            case ERROR -> {
+                System.out.println(RED + consoleLine + RESET);
+                if (t != null) t.printStackTrace(System.out);
             }
+            default -> System.out.println(consoleLine);
         }
-        return sb.toString();
-    }
 
-    private void writeToFile(String entry) {
-        if (logFile == null) {
-            System.err.println("Log file not initialized.");
-            return;
-        }
-        File parent = logFile.getParentFile();
-        if (parent != null && !parent.exists()) {
-            parent.mkdirs();
-        }
+        // File (no colors, keep objTag)
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(logFile, true))) {
-            writer.write(entry);
+            writer.write(entry + " " + objTag);
             writer.newLine();
-        } catch (IOException e) {
-            System.err.println("Logger failed: " + e.getMessage());
+            if (t != null) {
+                writer.write("Exception: " + t.toString());
+                writer.newLine();
+                for (StackTraceElement el : t.getStackTrace()) {
+                    writer.write("    at " + el.toString());
+                    writer.newLine();
+                }
+            }
+        } catch (IOException io) {
+            System.err.println("Logger file write failed: " + io.getMessage());
         }
     }
 }
-
-
-
