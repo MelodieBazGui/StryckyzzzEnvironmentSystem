@@ -1,10 +1,14 @@
 package mathTest;
 
-import math.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import math.Mat3;
+import math.Quat;
+import math.Vec3;
 
 class QuatTest {
 
@@ -84,11 +88,11 @@ class QuatTest {
         assertEquals(0f, unrotated.getY(), 1e-6);
         assertEquals(0f, unrotated.getZ(), 1e-6);
     }
-    
+
     @Test
     void testToRotationMatrixIdentity() {
         Mat3 m = q.toRotationMatrix();
-        
+
         // Should be identity
         assertEquals(1f, m.get(0,0), 1e-6f);
         assertEquals(1f, m.get(1,1), 1e-6f);
@@ -130,7 +134,7 @@ class QuatTest {
         assertEquals(0f, rotated.getY(), 1e-4f);
         assertEquals(-1f, rotated.getZ(), 1e-4f);
     }
-    
+
     @Test
     void testNormalize() {
         Quat unnormalized = new Quat(2, 0, 0, 0);

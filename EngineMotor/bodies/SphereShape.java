@@ -1,6 +1,8 @@
 package bodies;// SphereShape.java
 
-import math.*;
+import math.Mat3;
+import math.Quat;
+import math.Vec3;
 import math.algorithm.AABB;
 
 public final class SphereShape implements Shape {
@@ -40,7 +42,7 @@ public final class SphereShape implements Shape {
         Vec3 r = new Vec3(radius, radius, radius);
         return new AABB(Vec3.sub(position, r), Vec3.add(position, r));
     }
-    
+
     @Override
     public Mat3 computeInertia(float mass) {
         float i = 0.4f * mass * radius * radius; // (2/5) m r^2

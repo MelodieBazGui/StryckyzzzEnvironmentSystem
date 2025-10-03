@@ -30,7 +30,7 @@ public final class Quat {
         this.w = q.w;
         return this;
     }
-    
+
     // --- Basic factory helpers ---
     public static Quat identity() {
         return new Quat(1.0f, 0f, 0f, 0f);
@@ -97,8 +97,8 @@ public final class Quat {
                 2f * (xz - wy),       2f * (yz + wx),       1f - 2f * (xx + yy)
             });
     }
-    
-    
+
+
     public float len2() { return w*w + x*x + y*y + z*z; }
     public float len() { return (float)Math.sqrt(len2()); }
 
@@ -115,10 +115,10 @@ public final class Quat {
         return this;
     }
 
-    public void setIdentity() { 
-    	this.w = 1f; this.x = this.y = this.z = 0f; 
+    public void setIdentity() {
+    	this.w = 1f; this.x = this.y = this.z = 0f;
     }
-    
+
 
  // --- Hamilton product (this * other) returning a new quaternion ---
     public Quat mul(Quat o) {
@@ -128,7 +128,7 @@ public final class Quat {
         float rz = w*o.z + x*o.y - y*o.x + z*o.w;
         return new Quat(rw, rx, ry, rz);
     }
-    
+
     public Vec3 transform(Vec3 v) {
         // Rotate vector by this quaternion
         Quat qNorm = this.normalize(); // ensure unit quaternion
@@ -160,8 +160,12 @@ public final class Quat {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Quat)) return false;
+        if (this == o) {
+			return true;
+		}
+        if (!(o instanceof Quat)) {
+			return false;
+		}
         Quat q = (Quat) o;
         float eps = 1e-6f;
         return Math.abs(w - q.w) < eps &&
@@ -176,7 +180,7 @@ public final class Quat {
                             Math.round(y*1e6f), Math.round(z*1e6f));
     }
 
-    
+
     @Override
     public String toString() {
         return String.format("Quat[w=%.6f, x=%.6f, y=%.6f, z=%.6f]", w, x, y, z);

@@ -5,8 +5,6 @@ import math.Quat;
 import math.Vec3;
 import math.algorithm.EPA;
 import math.algorithm.GJK;
-import math.algorithm.EPA.PenetrationInfo;
-import math.algorithm.GJK.Result;
 
 public final class CollisionDetector {
 

@@ -12,7 +12,7 @@ public class Shelf {
     	this.name = name;
         this.shelf = new HashMap<>();
     }
-    
+
     public String getName() {
     	return name;
     }

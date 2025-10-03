@@ -15,7 +15,7 @@ public final class DistanceJoint implements Constraint {
     private final Vec3 localAnchorB;
     private final float restLength;
 
-    public DistanceJoint(RigidBodyFullInertia a, Vec3 localA, 
+    public DistanceJoint(RigidBodyFullInertia a, Vec3 localA,
                          RigidBodyFullInertia b, Vec3 localB) {
         this.bodyA = a;
         this.bodyB = b;
@@ -51,7 +51,9 @@ public final class DistanceJoint implements Constraint {
 
         Vec3 diff = Vec3.sub(pb, pa);
         float dist = diff.len();
-        if (dist < 1e-6f) return;
+        if (dist < 1e-6f) {
+			return;
+		}
 
         float error = dist - restLength;
         Vec3 n = diff.scl(1f / dist);
@@ -60,13 +62,19 @@ public final class DistanceJoint implements Constraint {
         float invMassA = bodyA.getInvMass();
         float invMassB = bodyB.getInvMass();
         float invMassSum = invMassA + invMassB;
-        if (invMassSum == 0f) return;
+        if (invMassSum == 0f) {
+			return;
+		}
 
         Vec3 correction = Vec3.scl(n, error / invMassSum);
 
         // apply positional corrections
-        if (invMassA > 0f) bodyA.getPosition().add(Vec3.scl(correction, -invMassA));
-        if (invMassB > 0f) bodyB.getPosition().add(Vec3.scl(correction,  invMassB));
+        if (invMassA > 0f) {
+			bodyA.getPosition().add(Vec3.scl(correction, -invMassA));
+		}
+        if (invMassB > 0f) {
+			bodyB.getPosition().add(Vec3.scl(correction,  invMassB));
+		}
     }
 
     @Override

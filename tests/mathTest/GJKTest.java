@@ -1,12 +1,16 @@
 package mathTest;
 
-import bodies.*;
-import math.*;
-import math.algorithm.GJK;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import bodies.BoxShape;
+import bodies.Shape;
+import bodies.SphereShape;
+import math.Quat;
+import math.Vec3;
+import math.algorithm.GJK;
 
 public class GJKTest {
 

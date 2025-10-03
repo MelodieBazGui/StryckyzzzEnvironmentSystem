@@ -1,17 +1,17 @@
 package Handlers;
 
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-
-import basicHandler.DataHandler;
-
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+
+import basicHandler.DataHandler;
+
 public class IMGHandler extends DataHandler {
-	
+
 	private final String IMGLOC = super.DATALOC + "img" + File.separator;
 
     /**
@@ -51,7 +51,7 @@ public class IMGHandler extends DataHandler {
             System.err.println("[ERROR][PNGHandler]: Failed to load resource image: " + pathName);
             return null;
         }
-        
+
     }
 
     /**
@@ -63,7 +63,7 @@ public class IMGHandler extends DataHandler {
     public static ImageIcon toIcon(BufferedImage image) {
         return image != null ? new ImageIcon(image) : null;
     }
-    
+
     private String getRessourcePath(String type, String imgName) {
 			return IMGLOC + type + File.separator + imgName + "." + type;
     }

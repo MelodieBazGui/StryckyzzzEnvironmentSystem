@@ -1,11 +1,11 @@
 package math.algorithm;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import bodies.Shape;
 import math.Quat;
 import math.Vec3;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Robust GJK using Shape.support(dir, quat, pos) API.
@@ -30,8 +30,8 @@ public final class GJK {
             this.intersect = intersect;
             this.simplex = simplex;
         }
-        public boolean intersects() {return intersect;};
-        public Vec3[] getSimplex() {return simplex;};
+        public boolean intersects() {return intersect;}
+        public Vec3[] getSimplex() {return simplex;}
     }
 
     /**
@@ -48,7 +48,9 @@ public final class GJK {
     ){
         // initial direction A -> B
         Vec3 dir = Vec3.sub(pB, pA);
-        if (dir.len2() < EPS) dir = new Vec3(1f, 0f, 0f);
+        if (dir.len2() < EPS) {
+			dir = new Vec3(1f, 0f, 0f);
+		}
 
         List<Vec3> simplex = new ArrayList<>(4);
         Vec3 newDir = new Vec3(); // next search direction
@@ -93,9 +95,13 @@ public final class GJK {
 
     // Convert simplex list (newest first) to array copies.
     private static Vec3[] simplexToArray(List<Vec3> simplex){
-        if (simplex == null || simplex.isEmpty()) return new Vec3[0];
+        if (simplex == null || simplex.isEmpty()) {
+			return new Vec3[0];
+		}
         Vec3[] arr = new Vec3[simplex.size()];
-        for (int i = 0; i < simplex.size(); i++) arr[i] = simplex.get(i).cpy();
+        for (int i = 0; i < simplex.size(); i++) {
+			arr[i] = simplex.get(i).cpy();
+		}
         return arr;
     }
 
@@ -114,13 +120,16 @@ public final class GJK {
 
     // Fallback direction if degenerate: choose any vector roughly perpendicular to newest simplex point.
     private static Vec3 fallbackDirection(List<Vec3> simplex){
-        if (simplex == null || simplex.isEmpty()) return new Vec3(1f, 0f, 0f);
+        if (simplex == null || simplex.isEmpty()) {
+			return new Vec3(1f, 0f, 0f);
+		}
         Vec3 a = simplex.get(0);
         // try simple perpendiculars
-        if (Math.abs(a.getX()) > Math.abs(a.getY()))
-            return new Vec3(-a.getZ(), 0f, a.getX()).normalize();
-        else
-            return new Vec3(0f, a.getZ(), -a.getY()).normalize();
+        if (Math.abs(a.getX()) > Math.abs(a.getY())) {
+			return new Vec3(-a.getZ(), 0f, a.getX()).normalize();
+		} else {
+			return new Vec3(0f, a.getZ(), -a.getY()).normalize();
+		}
     }
 
     // handleSimplex operates on list with newest at index 0, writes search dir into dirOut.

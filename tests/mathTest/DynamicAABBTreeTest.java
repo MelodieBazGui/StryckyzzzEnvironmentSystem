@@ -1,11 +1,13 @@
 package mathTest;
 
-import math.*;
-import math.algorithm.AABB;
-import math.algorithm.DynamicAABBTree;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+
+import math.Vec3;
+import math.algorithm.AABB;
+import math.algorithm.DynamicAABBTree;
 
 class DynamicAABBTreeTest {
 

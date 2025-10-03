@@ -49,12 +49,16 @@ public final class Contact {
      * These are used to apply friction impulses.
      */
     public Vec3 getTangentU() {
-        if (tangentU == null) computeTangents();
+        if (tangentU == null) {
+			computeTangents();
+		}
         return tangentU;
     }
 
     public Vec3 getTangentV() {
-        if (tangentV == null) computeTangents();
+        if (tangentV == null) {
+			computeTangents();
+		}
         return tangentV;
     }
 

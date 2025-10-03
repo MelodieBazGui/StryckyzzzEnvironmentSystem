@@ -1,9 +1,8 @@
 package eventManager.events;
 
-import utils.Logger;
-
 import eventManager.enumerations.StryckEventCategory;
 import eventManager.enumerations.StryckEventType;
+import utils.Logger;
 
 public class WindowMovedEvent extends StryckEvent {
     private final int x, y;

@@ -1,6 +1,11 @@
 package math.algorithm;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import math.Vec3;
@@ -36,7 +41,9 @@ public class DynamicAABBTree {
 
     public synchronized void remove(int bodyId){
         Node leaf = leafMap.remove(bodyId);
-        if(leaf == null) return;
+        if(leaf == null) {
+			return;
+		}
         removeLeaf(leaf);
         nodeCount.decrementAndGet();
     }
@@ -66,10 +73,14 @@ public class DynamicAABBTree {
         newParent.right = leaf;
         best.parent = newParent;
         leaf.parent = newParent;
-        if(oldParent == null) root = newParent;
-        else {
-            if(oldParent.left == best) oldParent.left = newParent;
-            else oldParent.right = newParent;
+        if(oldParent == null) {
+			root = newParent;
+		} else {
+            if(oldParent.left == best) {
+				oldParent.left = newParent;
+			} else {
+				oldParent.right = newParent;
+			}
         }
         // walk up and fix AABBs
         Node cur = leaf.parent;
@@ -87,7 +98,11 @@ public class DynamicAABBTree {
         if(grand == null){
             root = sibling; sibling.parent = null; return;
         }
-        if(grand.left == parent) grand.left = sibling; else grand.right = sibling;
+        if(grand.left == parent) {
+			grand.left = sibling;
+		} else {
+			grand.right = sibling;
+		}
         sibling.parent = grand;
         // fix AABBs up the tree
         Node cur = grand;
@@ -100,13 +115,14 @@ public class DynamicAABBTree {
     // return set of candidate pairs (each pair only once)
     public List<int[]> queryAllPairs() {
         List<int[]> pairs = new ArrayList<>();
-        if (root == null) return pairs;
+        if (root == null) {
+			return pairs;
+		}
 
         Set<Long> seen = new HashSet<>();
         List<Node> leaves = new ArrayList<>(leafMap.values());
 
-        for (int i = 0; i < leaves.size(); i++) {
-            Node a = leaves.get(i);
+        for (Node a : leaves) {
             // check overlap with all other leaves via tree
             queryOverlap(root, a, pairs, seen);
         }
@@ -115,8 +131,9 @@ public class DynamicAABBTree {
 
     // Traverse tree and add unique pairs
     private void queryOverlap(Node node, Node a, List<int[]> out, Set<Long> seen) {
-        if (node == null || node == a) return;
-        if (!node.aabb.overlaps(a.aabb)) return;
+        if (node == null || node == a || !node.aabb.overlaps(a.aabb)) {
+			return;
+		}
 
         if (node.leaf()) {
             if (node != a) {
@@ -143,7 +160,7 @@ public class DynamicAABBTree {
                             Math.max(a.getMax().getZ(), b.getMax().getZ()));
         return new AABB(min, max);
     }
-    
+
     private static float unionPerimeter(AABB a, AABB b){
         AABB u = unionAABB(a,b);
         Vec3 min = u.getMin(), max = u.getMax();

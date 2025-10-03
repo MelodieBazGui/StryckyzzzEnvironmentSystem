@@ -1,10 +1,20 @@
 package bodiesTest;
 
-import math.*;
-import bodies.*;
-import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import bodies.BoxShape;
+import bodies.RigidBodyFullInertia;
+import bodies.Shape;
+import math.Mat3;
+import math.Quat;
+import math.Vec3;
 
 class RigidBodyFullInertiaTest {
 
@@ -111,7 +121,7 @@ class RigidBodyFullInertiaTest {
 
         body = null;
     }
-    
+
     @Test
     void testInertiaBodyAndInverseConsistency() {
         float mass = 2f;
@@ -144,7 +154,7 @@ class RigidBodyFullInertiaTest {
 
         Mat3 inertiaWorldAfter = body.getInertiaWorldInv();
 
-        assertNotEquals(inertiaWorldBefore, inertiaWorldAfter, 
+        assertNotEquals(inertiaWorldBefore, inertiaWorldAfter,
             "World inertia should change when orientation changes");
 
         body = null;

@@ -1,11 +1,15 @@
 package mathTest;
 
-import math.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import org.junit.jupiter.api.Test;
+
+import bodies.SphereShape;
+import math.Quat;
+import math.Vec3;
 import math.algorithm.EPA;
 import math.algorithm.GJK;
-import bodies.SphereShape;
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
 class EPATest {
 

@@ -3,7 +3,7 @@ import eventManager.enumerations.StryckEventCategory;
 import eventManager.enumerations.StryckEventType;
 import utils.Logger;
 public class WindowFocus {
-	
+
 	public class WindowFocusEvent extends StryckEvent {
 	    private static final Logger logger = new Logger(WindowFocusEvent.class);
 
@@ -33,5 +33,5 @@ public class WindowFocus {
 	    @Override
 	    public int getCategoryFlags() { return StryckEventCategory.Application.getBit(); }
 	}
-	
+
 }

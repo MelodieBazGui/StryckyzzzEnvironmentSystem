@@ -1,7 +1,9 @@
 package bodies;
 
 import engine.IdGenerator;
-import math.* ;
+import math.Mat3;
+import math.Quat;
+import math.Vec3;
 
 public final class RigidBodyFullInertia {
     private final int id;
@@ -42,8 +44,9 @@ public final class RigidBodyFullInertia {
         this.position.set(pos);
         this.orientation.setIdentity();
         if(ori!=null){ /* set orientation from ori */ }
-        if(mass <= 0f){ this.invMass = 0f; }
-        else this.invMass = 1.0f/mass;
+        if(mass <= 0f){ this.invMass = 0f; } else {
+			this.invMass = 1.0f/mass;
+		}
         this.inertiaBody = inertiaBody;
         this.inertiaBodyInv = (inertiaBody != null) ? inertiaBody.inverse() : Mat3.identity();
         // initialize world inverse
@@ -60,7 +63,9 @@ public final class RigidBodyFullInertia {
 
     // Apply impulse (linear + angular), using full inertia world inverse
     public void applyImpulse(Vec3 impulse, Vec3 rel){
-        if(invMass == 0f) return;
+        if(invMass == 0f) {
+			return;
+		}
         // linear
         velocity.add(Vec3.scl(impulse, invMass));
         // angular: Δω = I_world_inv * (r × J)
@@ -71,7 +76,9 @@ public final class RigidBodyFullInertia {
 
     // Integrate (semi-implicit Euler)
     public void integrate(float dt, Vec3 gravity){
-        if(invMass == 0f) return;
+        if(invMass == 0f) {
+			return;
+		}
         velocity.add(Vec3.scl(gravity, dt));
         position.add(Vec3.scl(velocity, dt));
         orientation.integrateAngular(omega, dt);

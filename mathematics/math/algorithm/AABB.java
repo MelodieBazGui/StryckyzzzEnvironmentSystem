@@ -31,7 +31,7 @@ public final class AABB {
         Vec3 m = new Vec3(margin, margin, margin);
         return new AABB(Vec3.sub(min, m), Vec3.add(max, m));
     }
-    
+
     /**
      * Checks whether a point lies inside (or on the boundary of) this AABB.
      */

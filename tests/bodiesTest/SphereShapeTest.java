@@ -1,14 +1,18 @@
 package bodiesTest;
 
+import static org.junit.Assert.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import bodies.SphereShape;
-import math.*;
+import math.Quat;
+import math.Vec3;
 import math.algorithm.AABB;
 
-import org.junit.jupiter.api.*;
-
-import static org.junit.jupiter.api.Assertions.*;
-
-class SphereShapeTest {
+public class SphereShapeTest {
 
     private SphereShape sphereFromVec;
     private SphereShape sphereFromRadius;

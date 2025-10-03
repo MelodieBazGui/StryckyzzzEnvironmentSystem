@@ -4,14 +4,14 @@ import java.util.Locale;
 
 /**
  * High-performance 3x3 matrix class for physics/math.
- * 
+ *
  * Optimized for JVM:
  * - Uses a flat float[9] array (row-major).
  * - Methods avoid creating garbage (reuses this where possible).
  * - JIT-friendly, inlinable math ops.
  */
 public final class Mat3 {
-	
+
     // Row-major storage: m[row * 3 + col]
     private final float[] m = new float[9];
 
@@ -21,7 +21,9 @@ public final class Mat3 {
     }
 
     public Mat3(float[] values) {
-        if (values.length != 9) throw new IllegalArgumentException("Mat3 requires 9 values");
+        if (values.length != 9) {
+			throw new IllegalArgumentException("Mat3 requires 9 values");
+		}
         System.arraycopy(values, 0, m, 0, 9);
     }
 
@@ -54,7 +56,7 @@ public final class Mat3 {
         		0,0,zz
         });
     }
-    
+
     public Mat3 setIdentity() {
         m[0] = 1; m[1] = 0; m[2] = 0;
         m[3] = 0; m[4] = 1; m[5] = 0;
@@ -115,7 +117,9 @@ public final class Mat3 {
 
     public Mat3 inverse() {
         float det = determinant();
-        if (Math.abs(det) < 1e-8f) throw new ArithmeticException("Singular matrix");
+        if (Math.abs(det) < 1e-8f) {
+			throw new ArithmeticException("Singular matrix");
+		}
 
         float invDet = 1f / det;
         float[] r = new float[9];
@@ -165,7 +169,7 @@ public final class Mat3 {
                 0, 0, 1
         });
     }
-    
+
     public static Mat3 fromQuat(Quat q) {
         float x = q.getX();
         float y = q.getY();
@@ -192,16 +196,22 @@ public final class Mat3 {
             xz - wy,         yz + wx,          1f - (xx + yy)
         });
     }
-    
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Mat3)) return false;
+        if (this == o) {
+			return true;
+		}
+        if (!(o instanceof Mat3)) {
+			return false;
+		}
         Mat3 m = (Mat3) o;
         float eps = 1e-6f;
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                if (Math.abs(this.get(i,j) - m.get(i,j)) > eps) return false;
+                if (Math.abs(this.get(i,j) - m.get(i,j)) > eps) {
+					return false;
+				}
             }
         }
         return true;

@@ -1,6 +1,8 @@
 package bodies;
 
-import math.*;
+import math.Mat3;
+import math.Quat;
+import math.Vec3;
 import math.algorithm.AABB;
 
 //Shape.java

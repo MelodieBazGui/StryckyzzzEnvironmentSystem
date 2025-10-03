@@ -17,9 +17,11 @@ public final class Vec3Pool {
     public static Vec3 obtain() {
         ArrayDeque<Vec3> q = TL.get();
         Vec3 v = q.pollFirst();
-        if (v == null) return new Vec3();
+        if (v == null) {
+			return new Vec3();
+		}
         	v.set(0f,0f,0f);
-        return v; 
+        return v;
     }
 
     public static Vec3 obtain(float x, float y, float z) {

@@ -1,12 +1,15 @@
 package mathTest;
 
-import math.*;
-import math.absurd.CollisionDetector;
-import math.algorithm.EPA;
-import bodies.SphereShape;
+import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+
+import bodies.SphereShape;
+import math.Quat;
+import math.Vec3;
+import math.absurd.CollisionDetector;
+import math.algorithm.EPA;
 
 class CollisionDetectorTest {
 

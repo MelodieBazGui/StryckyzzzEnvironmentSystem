@@ -1,15 +1,15 @@
 package constraintsTest;
 
-import bodies.*;
+import org.junit.jupiter.api.Test;
+
+import bodies.RigidBodyFullInertia;
+import bodies.SphereShape;
 import constraints.Constraint;
 import constraints.DistanceJoint;
 import math.Quat;
 import math.Vec3;
-import registries.*;
-
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
+import registries.ConstraintRegistry;
+import registries.ShapeRegistry;
 
 class ConstraintRegistryTest {
     @Test

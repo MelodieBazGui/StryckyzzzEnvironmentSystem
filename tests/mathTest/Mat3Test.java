@@ -1,8 +1,12 @@
 package mathTest;
 
-import math.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+
+import math.Mat3;
+import math.Quat;
+import math.Vec3;
 
 class Mat3Test {
 

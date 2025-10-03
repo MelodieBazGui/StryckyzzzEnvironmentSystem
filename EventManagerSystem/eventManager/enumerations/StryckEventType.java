@@ -10,7 +10,7 @@ public enum StryckEventType {
 	AppTick, AppUpdate, AppRender, AppPhysics,
 	KeyboardPressed, KeyboardReleased,
 	MouseButtonPressed, MouseButtonReleased, MouseMouved, MouseScroll;
-	
+
 	public static List<StryckEventType> getWindowEvents() {
         return EnumSet.of(WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved)
                       .stream()
@@ -34,5 +34,5 @@ public enum StryckEventType {
                       .stream()
                       .collect(Collectors.toList());
     }
-	
+
 }

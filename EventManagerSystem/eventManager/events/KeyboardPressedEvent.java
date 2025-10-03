@@ -4,8 +4,6 @@ import eventManager.enumerations.StryckEventCategory;
 import eventManager.enumerations.StryckEventType;
 import utils.Logger;
 
-import utils.Logger;
-
 public class KeyboardPressedEvent extends StryckEvent {
     private final int keyCode;
     private final int repeatCount;

@@ -1,6 +1,8 @@
 package bodies;
 
-import math.*;
+import math.Mat3;
+import math.Quat;
+import math.Vec3;
 import math.algorithm.AABB;
 import utils.Logger;
 
@@ -12,13 +14,15 @@ public class BoxShape implements Shape {
     private final Vec3 halfExtents;
 
     private Logger log;
-    
+
     public BoxShape(Vec3 v) { halfExtents = v;
-    log.logInfo("Instanciated BoxShape from a vector");};
-    
+    log = new Logger(this.getClass());
+    log.info("Instanciated BoxShape from a vector");}
+
     public BoxShape(float hx, float hy, float hz) {
+        log = new Logger(this.getClass());
         this.halfExtents = new Vec3(hx, hy, hz);
-        log.logInfo("Instanciated BoxShape from floating point values");
+        log.info("Instanciated BoxShape from floating point values");
     }
 
     @Override

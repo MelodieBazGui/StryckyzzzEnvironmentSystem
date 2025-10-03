@@ -17,7 +17,7 @@ public class ClassUtil {
             return null;
         }
     }
-    
+
     public static Class<? extends Object> getClassName() {
         try {
             String className = Thread.currentThread()
@@ -29,5 +29,5 @@ public class ClassUtil {
             return null;
         }
     }
-    
+
 }

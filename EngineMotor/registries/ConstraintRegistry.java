@@ -1,10 +1,10 @@
 package registries;
 
-import constraints.Constraint;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import constraints.Constraint;
 
 /**
  * Registry for constraints between bodies.

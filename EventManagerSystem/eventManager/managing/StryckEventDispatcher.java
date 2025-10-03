@@ -1,9 +1,9 @@
 package eventManager.managing;
 
-import utils.Logger;
 import java.util.function.Function;
 
 import eventManager.events.StryckEvent;
+import utils.Logger;
 
 public class StryckEventDispatcher {
     private final StryckEvent event;
@@ -23,7 +23,9 @@ public class StryckEventDispatcher {
         if (type.isInstance(event)) {
             logger.info("Dispatching to handler for " + type.getSimpleName(), event);
             boolean handled = handler.apply(type.cast(event));
-            if (handled) event.setHandled(true);
+            if (handled) {
+				event.setHandled(true);
+			}
             return true;
         }
         return false;

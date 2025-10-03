@@ -1,12 +1,18 @@
 package mathTest;
 
-import org.junit.jupiter.api.BeforeEach;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import math.*;
-
-import static org.junit.jupiter.api.Assertions.*;
+import math.Mat3;
+import math.Quat;
+import math.Vec3;
 
 class Vec3Test {
 
@@ -92,9 +98,9 @@ class Vec3Test {
         assertEquals(0f, cross.getX(), 1e-6f);
         assertEquals(0f, cross.getY(), 1e-6f);
         assertEquals(1f, cross.getZ(), 1e-6f);
-        
-        xAxis = null; 
-        yAxis = null; 
+
+        xAxis = null;
+        yAxis = null;
         cross = null;
     }
 
@@ -108,7 +114,7 @@ class Vec3Test {
         assertEquals(1f, v.len(), 1e-6f);
         assertEquals(0.6f, v.getX(), 1e-6f);
         assertEquals(0.8f, v.getY(), 1e-6f);
-        
+
         v = null;
     }
 
@@ -174,11 +180,11 @@ class Vec3Test {
         assertEquals(1f, v.getX(), 1e-6);
         assertEquals(-2f, v.getY(), 1e-6);
         assertEquals(3f, v.getZ(), 1e-6);
-        
+
         v = null;
         neg = null;
     }
-    
+
     @Test
     void testTranspose() {
         Mat3 m = new Mat3(new float[]{
@@ -270,7 +276,7 @@ class Vec3Test {
         assertEquals(1f, m.get(1,1), 1e-6f);
         assertEquals(1f, m.get(2,2), 1e-6f);
     }
-    
+
     @Test
     void testEqualsAndHashCodeEqualObjects() {
         Vec3 v1 = new Vec3(1f, 2f, 3f);
@@ -326,7 +332,7 @@ class Vec3Test {
         }
     }
 
-    
+
     @Test
     void testToStringMetricFormat() {
         String s = a.toString();

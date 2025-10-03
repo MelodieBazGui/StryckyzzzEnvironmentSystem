@@ -1,12 +1,15 @@
 package eventManager.managing;
 
-import utils.Logger;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 import eventManager.enumerations.StryckEventType;
 import eventManager.events.StryckEvent;
+import utils.Logger;
 
 public class StryckEventManager {
     private final Map<StryckEventType, List<Function<? extends StryckEvent, Boolean>>> listeners = new ConcurrentHashMap<>();
@@ -14,7 +17,7 @@ public class StryckEventManager {
 
     public <T extends StryckEvent> void subscribe(StryckEventType type, Function<T, Boolean> listener) {
         listeners.computeIfAbsent(type, k -> Collections.synchronizedList(new ArrayList<>()))
-                 .add((Function<? extends StryckEvent, Boolean>) listener);
+                 .add(listener);
         logger.info("Listener subscribed for " + type);
     }
 
@@ -22,9 +25,13 @@ public class StryckEventManager {
         List<Function<? extends StryckEvent, Boolean>> funcs = listeners.get(event.getEventType());
         if (funcs != null) {
             for (Function<? extends StryckEvent, Boolean> func : funcs) {
-                if (event.isHandled()) break;
+                if (event.isHandled()) {
+					break;
+				}
                 boolean handled = ((Function<StryckEvent, Boolean>) func).apply(event);
-                if (handled) event.setHandled(true);
+                if (handled) {
+					event.setHandled(true);
+				}
             }
         }
         logger.info("Event dispatched: " + event.getName() + ", handled=" + event.isHandled());

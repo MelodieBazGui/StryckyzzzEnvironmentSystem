@@ -1,10 +1,10 @@
 package registries;
 
-import bodies.Shape;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import bodies.Shape;
 
 /**
  * Registry for shapes. Assigns IDs and tracks them.

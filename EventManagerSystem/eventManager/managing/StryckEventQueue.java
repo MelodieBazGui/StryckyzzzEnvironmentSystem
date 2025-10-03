@@ -1,11 +1,11 @@
 package eventManager.managing;
 
-import utils.Logger;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import eventManager.events.StryckEvent;
+import utils.Logger;
 
 public class StryckEventQueue {
     private final BlockingQueue<StryckEvent> queue = new LinkedBlockingQueue<>();
@@ -13,7 +13,9 @@ public class StryckEventQueue {
 
     /** push = non-blocking enqueue (returns immediately) */
     public void push(StryckEvent event) {
-        if (event == null) return;
+        if (event == null) {
+			return;
+		}
         queue.offer(event);
         logger.info("PUSH", event);
     }
@@ -21,7 +23,9 @@ public class StryckEventQueue {
     /** poll = non-blocking dequeue, returns null if empty */
     public StryckEvent poll() {
         StryckEvent e = queue.poll();
-        if (e != null) logger.info("POLL", e);
+        if (e != null) {
+			logger.info("POLL", e);
+		}
         return e;
     }
 
@@ -35,7 +39,9 @@ public class StryckEventQueue {
     /** poll with timeout (ms) */
     public StryckEvent poll(long timeoutMillis) throws InterruptedException {
         StryckEvent e = queue.poll(timeoutMillis, TimeUnit.MILLISECONDS);
-        if (e != null) logger.info("POLL(timeout)", e);
+        if (e != null) {
+			logger.info("POLL(timeout)", e);
+		}
         return e;
     }
 

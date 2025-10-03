@@ -1,12 +1,18 @@
 package utils;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Aggressive Logger with class-based tagging and colored console output.
  * Each log line can include the specific object instance for readability.
+ * Supports timing utilities to measure method/algorithm execution.
  */
 public class Logger {
     private final String classTag;
@@ -17,7 +23,9 @@ public class Logger {
     private static final String RED    = "\u001B[31m";
     private static final String YELLOW = "\u001B[33m";
     private static final String GREEN  = "\u001B[32m";
-    private static final String CYAN   = "\u001B[36m";
+
+    // Timers storage
+    private final Map<String, Long> timers = new HashMap<>();
 
     public Logger(Class<?> c) {
         this.classTag = c.getSimpleName();
@@ -38,30 +46,32 @@ public class Logger {
         return file;
     }
 
-    // Convenience overloads so callers can attach the concrete object
-    public void info(String msg) {
-        log(LogLevel.INFO, msg, null, null);
+    // --- Timing Methods ---
+    /** Start a named timer */
+    public void startTimer(String name) {
+        timers.put(name, System.nanoTime());
+        info("Timer started: " + name);
     }
 
-    public void info(String msg, Object obj) {
-        log(LogLevel.INFO, msg, obj, null);
+    /** Stop a named timer and log elapsed time in ms */
+    public void endTimer(String name) {
+        Long start = timers.remove(name);
+        if (start == null) {
+            warn("Timer '" + name + "' was never started");
+            return;
+        }
+        long elapsedNs = System.nanoTime() - start;
+        double elapsedMs = elapsedNs / 1_000_000.0;
+        info(String.format("Timer '%s' finished: %.3f ms", name, elapsedMs));
     }
 
-    public void warn(String msg) {
-        log(LogLevel.WARN, msg, null, null);
-    }
-
-    public void warn(String msg, Object obj) {
-        log(LogLevel.WARN, msg, obj, null);
-    }
-
-    public void error(String msg, Throwable t) {
-        log(LogLevel.ERROR, msg, null, t);
-    }
-
-    public void error(String msg, Object obj, Throwable t) {
-        log(LogLevel.ERROR, msg, obj, t);
-    }
+    // --- Logging API ---
+    public void info(String msg) { log(LogLevel.INFO, msg, null, null); }
+    public void info(String msg, Object obj) { log(LogLevel.INFO, msg, obj, null); }
+    public void warn(String msg) { log(LogLevel.WARN, msg, null, null); }
+    public void warn(String msg, Object obj) { log(LogLevel.WARN, msg, obj, null); }
+    public void error(String msg, Throwable t) { log(LogLevel.ERROR, msg, null, t); }
+    public void error(String msg, Object obj, Throwable t) { log(LogLevel.ERROR, msg, obj, t); }
 
     private synchronized void log(LogLevel level, String msg, Object obj, Throwable t) {
         String timestamp = new SimpleDateFormat("HH:mm:ss.SSS").format(new Date());
@@ -79,7 +89,9 @@ public class Logger {
             case WARN  -> System.out.println(YELLOW + consoleLine + RESET);
             case ERROR -> {
                 System.out.println(RED + consoleLine + RESET);
-                if (t != null) t.printStackTrace(System.out);
+                if (t != null) {
+                    t.printStackTrace(System.out);
+                }
             }
             default -> System.out.println(consoleLine);
         }

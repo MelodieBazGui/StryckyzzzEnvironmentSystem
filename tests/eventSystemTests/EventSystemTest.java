@@ -1,6 +1,14 @@
 package eventSystemTests;
 
-import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.util.concurrent.CountDownLatch;
+
+import org.junit.jupiter.api.Test;
 
 import eventManager.enumerations.StryckEventType;
 import eventManager.events.KeyboardPressedEvent;
@@ -9,12 +17,6 @@ import eventManager.events.WindowCloseEvent;
 import eventManager.events.WindowResizeEvent;
 import eventManager.managing.StryckEventDispatcher;
 import eventManager.managing.StryckEventQueue;
-
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.util.concurrent.CountDownLatch;
 
 class EventSystemTest {
 
@@ -71,7 +73,9 @@ class EventSystemTest {
                 int taken = 0;
                 while (taken < N) {
                     StryckEvent e = q.take(); // blocking
-                    if (e != null) taken++;
+                    if (e != null) {
+						taken++;
+					}
                 }
             } catch (InterruptedException ignored) {
             }

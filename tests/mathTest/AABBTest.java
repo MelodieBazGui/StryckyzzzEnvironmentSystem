@@ -1,10 +1,13 @@
 package mathTest;
 
-import math.*;
-import math.algorithm.AABB;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+
+import math.Vec3;
+import math.algorithm.AABB;
 
 class AABBTest {
 
@@ -35,7 +38,7 @@ class AABBTest {
         assertFalse(box.contains(new Vec3(5,11,5)));  // outside Y
         assertFalse(box.contains(new Vec3(5,5,12)));  // outside Z
     }
-    
+
     @Test
     void testOverlap() {
         AABB a = new AABB(new Vec3(0,0,0), new Vec3(1,1,1));

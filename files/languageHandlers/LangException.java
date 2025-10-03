@@ -9,7 +9,7 @@ package languageHandlers;
  * @author Fromage (Philou404 on GitHub)
  */
 public enum LangException {
-    MissingLanguageFile ("Missing Language File"), 
+    MissingLanguageFile ("Missing Language File"),
     MissingDirectoryFile("No such Directory"),
     EmptyLanguageFile ("Missing language translations"),
     InvalidFormatKey ("Invalid FormatKey"),
@@ -26,7 +26,7 @@ public enum LangException {
     LangException(String t){
         text = t;
     }
-    
+
     /**
      * Getter method to retrieve exception information as a regular Exception
      * <p>

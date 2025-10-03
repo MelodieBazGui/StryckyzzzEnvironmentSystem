@@ -1,11 +1,11 @@
 package math.algorithm;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import bodies.Shape;
 import math.Quat;
 import math.Vec3;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public final class EPA {
     private static final int MAX_ITER = 256;
@@ -40,11 +40,15 @@ public final class EPA {
         // collect unique copies
         List<Vec3> verts = new ArrayList<>();
         for (Vec3 v : simplex) {
-            if (!containsApprox(verts, v)) verts.add(v.cpy());
+            if (!containsApprox(verts, v)) {
+				verts.add(v.cpy());
+			}
         }
 
         System.out.println("EPA: initial unique verts from GJK (" + verts.size() + "):");
-        for (int i = 0; i < verts.size(); i++) System.out.println("  v[" + i + "] = " + verts.get(i));
+        for (int i = 0; i < verts.size(); i++) {
+			System.out.println("  v[" + i + "] = " + verts.get(i));
+		}
 
         // seed directions
         Vec3[] seedDirs = new Vec3[] {
@@ -65,12 +69,16 @@ public final class EPA {
         while (verts.size() < 4 && safety++ < 200) {
             for (Vec3 v : new ArrayList<>(verts)) {
                 Vec3 dir = Vec3.neg(v).cpy();
-                if (dir.len2() < 1e-12f) dir = new Vec3(1f,0f,0f);
+                if (dir.len2() < 1e-12f) {
+					dir = new Vec3(1f,0f,0f);
+				}
                 Vec3 s = support(A,B,qA,pA,qB,pB, dir);
                 if (!containsApprox(verts, s)) {
                     verts.add(s);
                     System.out.println("EPA: added support toward origin " + s);
-                    if (verts.size() >= 4) break;
+                    if (verts.size() >= 4) {
+						break;
+					}
                 }
             }
             if (verts.size() < 4) {
@@ -87,7 +95,9 @@ public final class EPA {
         }
 
         System.out.println("EPA: final verts count = " + verts.size());
-        for (int i = 0; i < verts.size(); i++) System.out.println("  final v[" + i + "] = " + verts.get(i));
+        for (int i = 0; i < verts.size(); i++) {
+			System.out.println("  final v[" + i + "] = " + verts.get(i));
+		}
 
         // check non-coplanarity of first 4
         if (verts.size() >= 4) {
@@ -143,7 +153,9 @@ public final class EPA {
 
             List<Face> visible = new ArrayList<>();
             for (Face f : faces) {
-                if (f.normal.dot(Vec3.sub(p, f.a)) > VISIBLE_EPS) visible.add(f);
+                if (f.normal.dot(Vec3.sub(p, f.a)) > VISIBLE_EPS) {
+					visible.add(f);
+				}
             }
             System.out.println("EPA iter " + iter + ": visible faces = " + visible.size());
             if (visible.isEmpty()) {
@@ -202,8 +214,11 @@ public final class EPA {
             Vec3 ac = Vec3.sub(c,a);
             Vec3 n = ab.cross(ac);
             float l2 = n.len2();
-            if (l2 > 1e-12f) n = n.cpy().normalize();
-            else n = new Vec3(0f,1f,0f);
+            if (l2 > 1e-12f) {
+				n = n.cpy().normalize();
+			} else {
+				n = new Vec3(0f,1f,0f);
+			}
 
             float d = n.dot(a);
             if (d < 0f) { n = n.cpy().scl(-1f); d = -d; }
@@ -219,7 +234,11 @@ public final class EPA {
                Math.abs(p.getZ()-q.getZ()) < EPS;
     }
     private static boolean containsApprox(List<Vec3> list, Vec3 v) {
-        for (Vec3 p : list) if (approxEqual(p, v)) return true;
+        for (Vec3 p : list) {
+			if (approxEqual(p, v)) {
+				return true;
+			}
+		}
         return false;
     }
 }

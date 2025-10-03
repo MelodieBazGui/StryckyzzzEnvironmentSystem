@@ -1,6 +1,12 @@
 package engine;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
 
 /**
  * Generic registry that maps integer IDs to objects, and recycles IDs when objects are removed.
