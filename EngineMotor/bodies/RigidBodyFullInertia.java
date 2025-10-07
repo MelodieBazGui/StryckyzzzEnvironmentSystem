@@ -43,13 +43,13 @@ public final class RigidBodyFullInertia {
         this.shape = shape;
         this.position.set(pos);
         this.orientation.setIdentity();
-        if(ori!=null){ /* set orientation from ori */ }
+        if(ori!=null){ new Quat(); }
         if(mass <= 0f){ this.invMass = 0f; } else {
 			this.invMass = 1.0f/mass;
 		}
         this.inertiaBody = inertiaBody;
         this.inertiaBodyInv = (inertiaBody != null) ? inertiaBody.inverse() : Mat3.identity();
-        // initialize world inverse
+
         updateInertiaWorld();
     }
 

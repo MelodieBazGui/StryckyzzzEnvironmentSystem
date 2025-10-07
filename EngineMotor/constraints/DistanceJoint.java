@@ -1,27 +1,37 @@
 package constraints;
 
-import bodies.RigidBodyFullInertia;
+import bodies.Shape;
 import math.Vec3;
 
 /**
- * Simple distance joint between two bodies at anchor points.
+ * High-performance distance joint constraint between two rigid bodies.
+ * Uses in-place Vec3 operations (no heap allocations, full getter-based access).
  */
 public final class DistanceJoint implements Constraint {
+
     private int id = -1;
 
-    private final RigidBodyFullInertia bodyA;
-    private final RigidBodyFullInertia bodyB;
+    private final Shape bodyA;
+    private final Shape bodyB;
     private final Vec3 localAnchorA;
     private final Vec3 localAnchorB;
     private final float restLength;
 
-    public DistanceJoint(RigidBodyFullInertia a, Vec3 localA,
-                         RigidBodyFullInertia b, Vec3 localB) {
+    // Reusable temporary vectors to avoid per-step allocations
+    private final Vec3 delta = new Vec3();
+    private final Vec3 correction = new Vec3();
+
+    public DistanceJoint(Shape a, Vec3 localA,
+                         Shape b, Vec3 localB) {
         this.bodyA = a;
         this.bodyB = b;
         this.localAnchorA = localA.cpy();
         this.localAnchorB = localB.cpy();
-        this.restLength = Vec3.sub(worldAnchorB(), worldAnchorA()).len();
+
+        // Precompute rest length (initial distance between anchor points)
+        Vec3 temp = new Vec3();
+        temp.set(worldAnchorB()).sub(worldAnchorA());
+        this.restLength = temp.len();
     }
 
     @Override
@@ -31,51 +41,69 @@ public final class DistanceJoint implements Constraint {
     public void setId(int id) { this.id = id; }
 
     @Override
-    public RigidBodyFullInertia getBodyA() { return bodyA; }
+    public Shape getBodyA() { return bodyA; }
 
     @Override
-    public RigidBodyFullInertia getBodyB() { return bodyB; }
+    public Shape getBodyB() { return bodyB; }
 
+    /**
+     * Computes the world-space anchor for body A.
+     */
     private Vec3 worldAnchorA() {
-        return Vec3.add(bodyA.getPosition(), localAnchorA);
+        Vec3 posA = bodyA.getPosition();
+        return new Vec3(
+            posA.getX() + localAnchorA.getX(),
+            posA.getY() + localAnchorA.getY(),
+            posA.getZ() + localAnchorA.getZ()
+        );
     }
 
+    /**
+     * Computes the world-space anchor for body B.
+     */
     private Vec3 worldAnchorB() {
-        return Vec3.add(bodyB.getPosition(), localAnchorB);
+        Vec3 posB = bodyB.getPosition();
+        return new Vec3(
+            posB.getX() + localAnchorB.getX(),
+            posB.getY() + localAnchorB.getY(),
+            posB.getZ() + localAnchorB.getZ()
+        );
     }
 
     @Override
     public void solve(float dt) {
-        Vec3 pa = worldAnchorA();
-        Vec3 pb = worldAnchorB();
+        // Compute displacement vector between anchors (delta = B - A)
+        delta.set(worldAnchorB()).sub(worldAnchorA());
+        float distance = delta.len();
 
-        Vec3 diff = Vec3.sub(pb, pa);
-        float dist = diff.len();
-        if (dist < 1e-6f) {
-			return;
-		}
+        // Avoid divide-by-zero or coincident anchor points
+        if (distance < 1e-6f) return;
 
-        float error = dist - restLength;
-        Vec3 n = diff.scl(1f / dist);
-
-        // simple positional correction (no Baumgarte, no compliance)
+        // Compute inverse masses
         float invMassA = bodyA.getInvMass();
         float invMassB = bodyB.getInvMass();
         float invMassSum = invMassA + invMassB;
-        if (invMassSum == 0f) {
-			return;
-		}
+        if (invMassSum == 0f) return;
 
-        Vec3 correction = Vec3.scl(n, error / invMassSum);
+        // Compute normalized direction from A to B
+        Vec3 n = delta.cpy().scl(1f / distance);
 
-        // apply positional corrections
+        // Compute constraint error
+        float C = distance - restLength;
+        if (Math.abs(C) < 1e-6f) return;
+
+        // Apply positional corrections proportionally to inverse mass
+        float correctionA =  C * (invMassA / invMassSum);
+        float correctionB = -C * (invMassB / invMassSum);
+
         if (invMassA > 0f) {
-			bodyA.getPosition().add(Vec3.scl(correction, -invMassA));
-		}
+            bodyA.getPosition().add(Vec3.scl(n, correctionA)); // A moves toward B
+        }
         if (invMassB > 0f) {
-			bodyB.getPosition().add(Vec3.scl(correction,  invMassB));
-		}
+            bodyB.getPosition().add(Vec3.scl(n, correctionB)); // B moves toward A
+        }
     }
+
 
     @Override
     public Vec3[] getAnchorPoints() {

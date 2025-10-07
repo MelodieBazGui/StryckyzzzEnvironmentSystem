@@ -1,0 +1,9 @@
+[10:41:13.692] [WindowCloseEvent] INFO Created 
+[10:41:13.703] [WindowCloseEvent] INFO setHandled=true [WindowCloseEvent@00c9d0d6]
+[10:41:13.716] [WindowCloseEvent] INFO Created 
+[10:41:56.576] [WindowCloseEvent] INFO Created 
+[10:41:56.579] [WindowCloseEvent] INFO setHandled=true [WindowCloseEvent@5a021cb9]
+[10:41:56.584] [WindowCloseEvent] INFO Created 
+[10:59:27.574] [WindowCloseEvent] INFO Created 
+[10:59:27.580] [WindowCloseEvent] INFO setHandled=true [WindowCloseEvent@43c67247]
+[10:59:27.588] [WindowCloseEvent] INFO Created 

@@ -1,6 +1,7 @@
 package constraints;
 
 import bodies.RigidBodyFullInertia;
+import bodies.Shape;
 import math.Vec3;
 
 /**
@@ -11,8 +12,8 @@ public interface Constraint {
     int getId();
     void setId(int id);
 
-    RigidBodyFullInertia getBodyA();
-    RigidBodyFullInertia getBodyB();
+    Shape getBodyA();
+    Shape getBodyB();
 
     /** Solve constraint for this timestep. */
     void solve(float dt);

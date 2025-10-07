@@ -5,85 +5,15 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="app"/>
 	<classpathentry kind="src" path="EngineMotor"/>
 	<classpathentry kind="src" path="EventManagerSystem"/>
-	<classpathentry kind="src" path="lib"/>
+	<classpathentry excluding="JOGL/jar/" kind="src" path="lib"/>
 	<classpathentry kind="src" path="mathematics"/>
 	<classpathentry kind="src" path="StryckyzzzUtils"/>
 	<classpathentry kind="src" path="tests"/>
 	<classpathentry kind="lib" path="lib/JOGL/jar/jogl-all-android.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/JOGL/jar/jogl-all-android-natives-android-aarch64.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/JOGL/jar/jogl-all-android-natives-linux-aarch64.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/JOGL/jar/jogl-all-android-natives-linux-amd64.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/JOGL/jar/jogl-all-android-natives-linux-armv6hf.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/JOGL/jar/jogl-all-android-natives-macosx-universal.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/JOGL/jar/jogl-all-android-natives-windows-amd64.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/JOGL/jar/jogl-all-mobile.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/JOGL/jar/jogl-all-mobile-natives-android-aarch64.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/JOGL/jar/jogl-all-mobile-natives-linux-aarch64.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/JOGL/jar/jogl-all-mobile-natives-linux-amd64.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/JOGL/jar/jogl-all-mobile-natives-linux-armv6hf.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/JOGL/jar/jogl-all-mobile-natives-macosx-universal.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/JOGL/jar/jogl-all-mobile-natives-windows-amd64.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
@@ -114,6 +44,11 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/JOGL/jar/jogl-all-natives-windows-amd64.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
