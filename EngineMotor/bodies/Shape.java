@@ -6,7 +6,10 @@ import math.Vec3;
 import math.algorithm.AABB;
 
 //Shape.java
-public interface Shape {
+/**
+ * @author EmeJay
+ */
+public abstract class Shape {
 	
 	 /**
 	  * Support function for GJK:
@@ -17,21 +20,22 @@ public interface Shape {
 	  * @param pos Position of the shape in world space
 	  * @return Support point in world space
 	  */
-	Vec3 support(Vec3 dir, Quat rot, Vec3 pos);
+	abstract Vec3 support(Vec3 dir, Quat rot, Vec3 pos);
 	
 	 /**
 	  * Compute the world-space axis-aligned bounding box for broadphase.
 	  */
-	AABB computeAABB(Quat orientation, Vec3 position);
+	abstract AABB computeAABB(Quat orientation, Vec3 position);
 	
 	 /**
 	  * Compute inertia tensor (body-space).
 	  * @param mass mass of the body
 	  * @return inertia tensor in local space
 	  */
-	Mat3 computeInertia(float mass);
+	abstract Mat3 computeInertia(float mass);
 
-	Vec3 getPosition();
+	abstract Vec3 getPosition();
+	
+	abstract float getInvMass();
 
-	float getInvMass();
 }

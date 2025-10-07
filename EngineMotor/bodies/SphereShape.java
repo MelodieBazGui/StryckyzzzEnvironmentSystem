@@ -8,11 +8,13 @@ import math.algorithm.AABB;
 public final class SphereShape implements Shape {
 	private final Vec3 center;
     private final float radius;
+	private float invMass;
 
     // Constructor using a Vec3
-    public SphereShape(Vec3 vec) {
+    public SphereShape(Vec3 vec, float invMass) {
         this.center = vec.cpy();   // keep the vector as center
         this.radius = vec.len();   // use its magnitude as radius
+        this.invMass = invMass;
     }
 
     public Vec3 getCenter() {
@@ -48,4 +50,14 @@ public final class SphereShape implements Shape {
         float i = 0.4f * mass * radius * radius; // (2/5) m r^2
         return Mat3.diag(i, i, i);
     }
+
+	@Override
+	public Vec3 getPosition() {
+		return center;
+	}
+
+	@Override
+	public float getInvMass() {
+		return invMass;
+	}
 }

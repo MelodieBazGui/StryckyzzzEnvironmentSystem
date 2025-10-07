@@ -25,7 +25,7 @@ class RigidBodyFullInertiaTest {
     @BeforeEach
     void setUp() {
         // Example: a cube shape with inertia computation
-        box = new BoxShape(1f, 2f, 3f); // Adjust to your implementation
+        box = new BoxShape(1f, 2f, 3f, 1f); // Adjust to your implementation
     }
 
     @AfterEach

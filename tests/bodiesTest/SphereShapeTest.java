@@ -20,7 +20,7 @@ public class SphereShapeTest {
 
     @BeforeEach
     void setUp() {
-        sphereFromVec = new SphereShape(new Vec3(3f, 4f, 0f)); // radius = 5
+        sphereFromVec = new SphereShape(new Vec3(3f, 4f, 0f), 1f); // radius = 5
         sphereFromRadius = new SphereShape(2.5f);
         identity = Quat.identity();
     }

@@ -24,12 +24,10 @@ public class DistanceJointTest {
             this.invMass = invMass;
         }
 
-        @Override
         public Vec3 getPosition() {
             return position;
         }
 
-        @Override
         public float getInvMass() {
             return invMass;
         }

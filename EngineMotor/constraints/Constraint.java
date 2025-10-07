@@ -1,6 +1,5 @@
 package constraints;
 
-import bodies.RigidBodyFullInertia;
 import bodies.Shape;
 import math.Vec3;
 

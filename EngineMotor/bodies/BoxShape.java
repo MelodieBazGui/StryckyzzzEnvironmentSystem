@@ -9,19 +9,25 @@ import utils.Logger;
 /**
  * Axis-aligned box in local space, centered at origin.
  * Half extents define its size.
+ * @author EmeJay
  */
 public class BoxShape implements Shape {
     private final Vec3 halfExtents;
 
     private Logger log;
 
-    public BoxShape(Vec3 v) { halfExtents = v;
-    log = new Logger(this.getClass());
-    log.info("Instanciated BoxShape from a vector");}
+	private float invMass;
 
-    public BoxShape(float hx, float hy, float hz) {
+    public BoxShape(Vec3 v, float invMass) { 
+	    log = new Logger(this.getClass());
+    	halfExtents = v;
+    	this.invMass = invMass;
+	    log.info("Instanciated BoxShape from a vector");}
+
+    public BoxShape(float hx, float hy, float hz, float invMass) {
         log = new Logger(this.getClass());
         this.halfExtents = new Vec3(hx, hy, hz);
+    	this.invMass = invMass;
         log.info("Instanciated BoxShape from floating point values");
     }
 
@@ -92,4 +98,14 @@ public class BoxShape implements Shape {
     public Vec3 getHalfExtents() {
         return halfExtents.cpy();
     }
+
+    @Override
+	public Vec3 getPosition() {
+		return halfExtents;
+	}
+
+	@Override
+	public float getInvMass() {
+		return invMass;
+	}
 }
