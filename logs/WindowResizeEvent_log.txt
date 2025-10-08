@@ -8,3 +8,13 @@
 [10:50:28.053] [WindowResizeEvent] INFO Created with size: 800x600 
 [13:42:04.165] [WindowResizeEvent] INFO Created with size: 1280x720 
 [13:42:04.173] [WindowResizeEvent] INFO Created with size: 800x600 
+[15:26:47.037] [WindowResizeEvent] INFO Created with size: 1280x720 
+[15:26:47.040] [WindowResizeEvent] INFO Created with size: 800x600 
+[21:17:15.741] [WindowResizeEvent] INFO Created with size: 1280x720 
+[21:17:15.751] [WindowResizeEvent] INFO Created with size: 800x600 
+[21:27:26.477] [WindowResizeEvent] INFO Created with size: 1280x720 
+[21:27:26.479] [WindowResizeEvent] INFO Created with size: 800x600 
+[21:33:51.519] [WindowResizeEvent] INFO Created with size: 1280x720 
+[21:33:51.521] [WindowResizeEvent] INFO Created with size: 800x600 
+[21:40:41.959] [WindowResizeEvent] INFO Created with size: 1280x720 
+[21:40:41.961] [WindowResizeEvent] INFO Created with size: 800x600 

@@ -13,3 +13,18 @@
 [13:42:04.151] [WindowCloseEvent] INFO Created 
 [13:42:04.163] [WindowCloseEvent] INFO setHandled=true [WindowCloseEvent@076f4b65]
 [13:42:04.175] [WindowCloseEvent] INFO Created 
+[15:26:47.032] [WindowCloseEvent] INFO Created 
+[15:26:47.035] [WindowCloseEvent] INFO setHandled=true [WindowCloseEvent@0c1fca1e]
+[15:26:47.041] [WindowCloseEvent] INFO Created 
+[21:17:15.725] [WindowCloseEvent] INFO Created 
+[21:17:15.739] [WindowCloseEvent] INFO setHandled=true [WindowCloseEvent@36328d33]
+[21:17:15.752] [WindowCloseEvent] INFO Created 
+[21:27:26.472] [WindowCloseEvent] INFO Created 
+[21:27:26.476] [WindowCloseEvent] INFO setHandled=true [WindowCloseEvent@5ba88be8]
+[21:27:26.481] [WindowCloseEvent] INFO Created 
+[21:33:51.514] [WindowCloseEvent] INFO Created 
+[21:33:51.517] [WindowCloseEvent] INFO setHandled=true [WindowCloseEvent@36328d33]
+[21:33:51.522] [WindowCloseEvent] INFO Created 
+[21:40:41.955] [WindowCloseEvent] INFO Created 
+[21:40:41.958] [WindowCloseEvent] INFO setHandled=true [WindowCloseEvent@36328d33]
+[21:40:41.963] [WindowCloseEvent] INFO Created 

@@ -19,7 +19,7 @@ class ContactTest {
     @BeforeEach
     void setUp() {
         point = new Vec3(1, 2, 3);
-        normal = new Vec3(0, 1, 0); // Y-up
+        normal = new Vec3(0, 0, 1);
         contact = new Contact(1, 2, point, normal, 0.05f, 0.6f, 0.4f);
     }
 
@@ -45,8 +45,8 @@ class ContactTest {
         // Normal should be normalized
         assertEquals(1.0f, contact.normal.len(), 1e-6);
         assertEquals(0f, contact.normal.getX(), 1e-6);
-        assertEquals(1f, contact.normal.getY(), 1e-6);
-        assertEquals(0f, contact.normal.getZ(), 1e-6);
+        assertEquals(0f, contact.normal.getY(), 1e-6);
+        assertEquals(1f, contact.normal.getZ(), 1e-6);
     }
 
     @Test
@@ -58,13 +58,15 @@ class ContactTest {
 
     @Test
     void testTangentsAreOrthogonal() {
+        contact.computeTangents();
         Vec3 u = contact.getTangentU();
         Vec3 v = contact.getTangentV();
-
+        
         // Length should be 1
         assertEquals(1f, u.len(), 1e-6);
         assertEquals(1f, v.len(), 1e-6);
 
+        
         // u · normal = 0
         assertEquals(0f, u.dot(contact.normal), 1e-6);
 

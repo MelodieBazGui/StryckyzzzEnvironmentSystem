@@ -79,26 +79,46 @@ public final class Quat {
         normalize();
     }
 
-    /** Convert quaternion to a 3x3 rotation matrix. */
+    /**
+     * Converts Quaternion to rotation matrix
+     * @return rotation matrix outt'a the quaternion
+     */
     public Mat3 toRotationMatrix() {
-        float xx = x * x;
-        float yy = y * y;
-        float zz = z * z;
-        float xy = x * y;
-        float xz = x * z;
-        float yz = y * z;
-        float wx = w * x;
-        float wy = w * y;
-        float wz = w * z;
+    // Precompute products
+    float xx = x * x;
+    float yy = y * y;
+    float zz = z * z;
+    float xy = x * y;
+    float xz = x * z;
+    float yz = y * z;
+    float wx = w * x;
+    float wy = w * y;
+    float wz = w * z;
 
-        return new Mat3(new float[]{
-                1f - 2f * (yy + zz),  2f * (xy - wz),       2f * (xz + wy),
-                2f * (xy + wz),       1f - 2f * (xx + zz),  2f * (yz - wx),
-                2f * (xz - wy),       2f * (yz + wx),       1f - 2f * (xx + yy)
-            });
+    // Raw matrix values
+    float[] m = new float[]{
+        1f - 2f * (yy + zz),  2f * (xy - wz),       2f * (xz + wy),
+        2f * (xy + wz),       1f - 2f * (xx + zz),  2f * (yz - wx),
+        2f * (xz - wy),       2f * (yz + wx),       1f - 2f * (xx + yy)
+    };
+
+    // Clean tiny floating-point errors
+    for (int i = 0; i < m.length; i++) {
+        m[i] = clean(m[i]);
     }
 
+    return new Mat3(m);
+}
 
+// Helper to snap tiny values to 0, 1, or -1
+private float clean(float v) {
+    float epsilon = 1e-6f;
+    if (Math.abs(v) < epsilon) return 0f;
+    if (Math.abs(v - 1f) < epsilon) return 1f;
+    if (Math.abs(v + 1f) < epsilon) return -1f;
+    return v;
+}
+    
     public float len2() { return w*w + x*x + y*y + z*z; }
     public float len() { return (float)Math.sqrt(len2()); }
 

@@ -3,7 +3,7 @@ package math;
 /**
  * Ultra-fast 3D vector for real-time physics and rendering.
  * All operations are in-place unless otherwise noted.
- * No memory allocation, no garbage, no Locale overhead.
+ * No memory allocation, no garbage, no Locale overhead where unneeded (such as transformations of a vector).
  * @author EmeJay
  */
 public final class Vec3 {
@@ -85,20 +85,27 @@ public final class Vec3 {
         return this;
     }
 
+    
+    
     // -------------------------
     // Math helpers
     // -------------------------
     public float dot(Vec3 v) {
         return x * v.x + y * v.y + z * v.z;
     }
-
+    
     public Vec3 cross(Vec3 v) {
-        float cx = y * v.z - z * v.y;
-        float cy = z * v.x - x * v.z;
-        float cz = x * v.y - y * v.x;
-        return set(cx, cy, cz);
+    	float oldX = x;
+        float oldY = y;
+        float oldZ = z;
+
+        x = oldY * v.z - oldZ * v.y;
+        y = oldZ * v.x - oldX * v.z;
+        z = oldX * v.y - oldY * v.x;
+        return this;
     }
 
+    
     public float len2() {
         return x * x + y * y + z * z;
     }
@@ -124,11 +131,10 @@ public final class Vec3 {
     /** Standard normalization (slower but more precise). */
     public Vec3 normalize() {
         float l = len();
-        if (l > 1e-8f) {
-            float inv = 1f / l;
-            x *= inv;
-            y *= inv;
-            z *= inv;
+        if (l != 0) {
+            x /= l;
+            y /= l;
+            z /= l;
         }
         return this;
     }
@@ -225,4 +231,5 @@ public final class Vec3 {
     public static float dot(Vec3 a, Vec3 b) {
         return a.x * b.x + a.y * b.y + a.z * b.z;
     }
+    
 }

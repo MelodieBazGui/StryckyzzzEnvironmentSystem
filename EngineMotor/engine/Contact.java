@@ -62,11 +62,22 @@ public final class Contact {
         return tangentV;
     }
 
-    private void computeTangents() {
-        // Pick an arbitrary vector that is not parallel to normal
-        Vec3 ref = Math.abs(normal.getX()) > 0.707f ? new Vec3(0,1,0) : new Vec3(1,0,0);
-        tangentU = normal.cross(ref).normalize();
-        tangentV = normal.cross(tangentU).normalize();
+    public void computeTangents() {
+	    if (normal == null || normal.len() == 0) {
+	        throw new IllegalStateException("Normal vector must be initialized and non-zero before computing tangents.");
+	    }
+
+	    // Pick a reference vector not parallel to the normal
+	    Vec3 ref = Math.abs(normal.getX()) < 0.9f ? new Vec3(1, 0, 0) : new Vec3(0, 1, 0);
+
+	    tangentU = normal.cross(ref);
+	    if (tangentU.len() == 0) { // edge case if ref was parallel
+	        ref = new Vec3(0, 0, 1);
+	        tangentU = normal.cross(ref);
+	    }
+
+	    tangentU = tangentU.normalize();
+	    tangentV = normal.cross(tangentU).normalize();
     }
 
     @Override

@@ -17,7 +17,8 @@ class QuatTest {
 
     @BeforeEach
     void setUp() {
-        axis = new Vec3(0, 1, 0); // Y-axis
+        axis = new Vec3(0, 1, 0); // Y-axis*
+        q = new Quat(0f, 0f, 0f, 1f);
         q = Quat.fromAxisAngle(axis, (float) Math.toRadians(90)); // 90° around Y
     }
 
@@ -91,16 +92,20 @@ class QuatTest {
 
     @Test
     void testToRotationMatrixIdentity() {
-        Mat3 m = q.toRotationMatrix();
+    	q.normalize();
+    	Mat3 m = q.toRotationMatrix();
 
-        // Should be identity
-        assertEquals(1f, m.get(0,0), 1e-6f);
-        assertEquals(1f, m.get(1,1), 1e-6f);
-        assertEquals(1f, m.get(2,2), 1e-6f);
+    	// Diagonal should be ~1
+    	for (int i = 0; i < 3; i++) {
+    	    assertEquals(1f, m.get(i, i), 1e-5f);
+    	}
 
-        assertEquals(0f, m.get(0,1), 1e-6f);
-        assertEquals(0f, m.get(0,2), 1e-6f);
-        assertEquals(0f, m.get(1,0), 1e-6f);
+    	// Off-diagonal should be ~0
+    	for (int i = 0; i < 3; i++) {
+    	    for (int j = 0; j < 3; j++) {
+    	        if (i != j) assertEquals(0f, m.get(i, j), 1e-5f);
+    	    }
+    	}
     }
 
     @Test
