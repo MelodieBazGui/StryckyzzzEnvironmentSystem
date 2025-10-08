@@ -20,12 +20,11 @@ class RigidBodyFullInertiaTest {
 
     private static final float EPS = 1e-6f;
 
-    private Shape box; // Replace with your concrete Shape subclass
+    private Shape box;
 
     @BeforeEach
     void setUp() {
-        // Example: a cube shape with inertia computation
-        box = new BoxShape(1f, 2f, 3f, 1f); // Adjust to your implementation
+        box = new BoxShape(1f,2f,3f,1f);
     }
 
     @AfterEach

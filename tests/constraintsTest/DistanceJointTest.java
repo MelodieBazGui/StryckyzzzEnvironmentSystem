@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class DistanceJointTest {
 
-    static class MockBody implements Shape {
+    static class MockBody extends Shape {
         private final Vec3 position;
         private final float invMass;
 
@@ -24,16 +24,7 @@ public class DistanceJointTest {
             this.invMass = invMass;
         }
 
-        public Vec3 getPosition() {
-            return position;
-        }
-
-        public float getInvMass() {
-            return invMass;
-        }
-
         // Shape implementation (dummy)
-        @Override
         public Vec3 support(Vec3 dir, Quat rot, Vec3 pos) {
             Vec3 d = dir.cpy().normalize();
             return new Vec3(
@@ -43,18 +34,28 @@ public class DistanceJointTest {
             );
         }
 
-        @Override
         public AABB computeAABB(Quat orientation, Vec3 position) {
             Vec3 half = new Vec3(0.5f, 0.5f, 0.5f);
             return new AABB(Vec3.sub(position, half), Vec3.add(position, half));
         }
 
-        @Override
         public Mat3 computeInertia(float mass) {
             // Simple diagonal inertia tensor for test (unit cube)
             float diag = (1f / 6f) * mass;
             return Mat3.diag(diag, diag, diag);
         }
+
+
+		@Override
+		public Vec3 getPosition() {
+			return this.position;
+		}
+
+
+		@Override
+		public float getInvMass() {
+			return this.invMass;
+		}
     }
 
     private MockBody bodyA;

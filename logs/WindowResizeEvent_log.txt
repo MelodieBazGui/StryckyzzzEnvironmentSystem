@@ -4,3 +4,7 @@
 [10:41:56.582] [WindowResizeEvent] INFO Created with size: 800x600 
 [10:59:27.583] [WindowResizeEvent] INFO Created with size: 1280x720 
 [10:59:27.586] [WindowResizeEvent] INFO Created with size: 800x600 
+[10:50:28.043] [WindowResizeEvent] INFO Created with size: 1280x720 
+[10:50:28.053] [WindowResizeEvent] INFO Created with size: 800x600 
+[13:42:04.165] [WindowResizeEvent] INFO Created with size: 1280x720 
+[13:42:04.173] [WindowResizeEvent] INFO Created with size: 800x600 

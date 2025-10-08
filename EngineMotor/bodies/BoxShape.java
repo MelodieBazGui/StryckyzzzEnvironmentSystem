@@ -11,35 +11,32 @@ import utils.Logger;
  * Half extents define its size.
  * @author EmeJay
  */
-public class BoxShape implements Shape {
-    private final Vec3 halfExtents;
-
+public class BoxShape extends Shape {
+	
     private Logger log;
-
-	private float invMass;
 
     public BoxShape(Vec3 v, float invMass) { 
 	    log = new Logger(this.getClass());
-    	halfExtents = v;
-    	this.invMass = invMass;
+	    setPosition(v);
+    	setInvMass(invMass);
 	    log.info("Instanciated BoxShape from a vector");}
 
     public BoxShape(float hx, float hy, float hz, float invMass) {
         log = new Logger(this.getClass());
-        this.halfExtents = new Vec3(hx, hy, hz);
-    	this.invMass = invMass;
+        setPosition(new Vec3(hx, hy, hz));
+        setInvMass(invMass);
         log.info("Instanciated BoxShape from floating point values");
     }
 
-    @Override
+	@Override
     public Vec3 support(Vec3 dir, Quat rot, Vec3 pos) {
         // rotate dir into local space
         Vec3 dirLocal = rot.conjugate().transform(dir).normalize();
 
         // pick corner in local space
-        float x = dirLocal.getX() >= 0 ? halfExtents.getX() : -halfExtents.getX();
-        float y = dirLocal.getY() >= 0 ? halfExtents.getY() : -halfExtents.getY();
-        float z = dirLocal.getZ() >= 0 ? halfExtents.getZ() : -halfExtents.getZ();
+        float x = dirLocal.getX() >= 0 ? getPosition().getX() : -getPosition().getX();
+        float y = dirLocal.getY() >= 0 ? getPosition().getY() : -getPosition().getY();
+        float z = dirLocal.getZ() >= 0 ? getPosition().getZ() : -getPosition().getZ();
 
         Vec3 cornerLocal = new Vec3(x, y, z);
 
@@ -58,9 +55,9 @@ public class BoxShape implements Shape {
             for (int sy = -1; sy <= 1; sy += 2) {
                 for (int sz = -1; sz <= 1; sz += 2) {
                     corners[i++] = new Vec3(
-                            sx * halfExtents.getX(),
-                            sy * halfExtents.getY(),
-                            sz * halfExtents.getZ()
+                            sx * getPosition().getX(),
+                            sy * getPosition().getY(),
+                            sz * getPosition().getZ()
                     );
                 }
             }
@@ -84,9 +81,9 @@ public class BoxShape implements Shape {
 
     @Override
     public Mat3 computeInertia(float mass) {
-        float x2 = 4 * halfExtents.getX() * halfExtents.getX();
-        float y2 = 4 * halfExtents.getY() * halfExtents.getY();
-        float z2 = 4 * halfExtents.getZ() * halfExtents.getZ();
+        float x2 = 4 * getPosition().getX() * getPosition().getX();
+        float y2 = 4 * getPosition().getY() * getPosition().getY();
+        float z2 = 4 * getPosition().getZ() * getPosition().getZ();
 
         float ix = (1f / 12f) * mass * (y2 + z2);
         float iy = (1f / 12f) * mass * (x2 + z2);
@@ -96,16 +93,7 @@ public class BoxShape implements Shape {
     }
 
     public Vec3 getHalfExtents() {
-        return halfExtents.cpy();
+        return getPosition();
     }
-
-    @Override
-	public Vec3 getPosition() {
-		return halfExtents;
-	}
-
-	@Override
-	public float getInvMass() {
-		return invMass;
-	}
+    
 }

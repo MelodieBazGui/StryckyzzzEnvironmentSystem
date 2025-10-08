@@ -5,7 +5,7 @@ import math.Quat;
 import math.Vec3;
 import math.algorithm.AABB;
 
-public final class SphereShape implements Shape {
+public final class SphereShape extends Shape {
 	private final Vec3 center;
     private final float radius;
 	private float invMass;

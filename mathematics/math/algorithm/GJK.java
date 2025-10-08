@@ -163,7 +163,7 @@ public final class GJK {
         if (simplex.size() == 3){
             Vec3 A = simplex.get(0), B = simplex.get(1), C = simplex.get(2);
             Vec3 AB = Vec3.sub(B, A), AC = Vec3.sub(C, A);
-            Vec3 AO = Vec3.neg(A);
+            Vec3 AO = Vec3.neg(A.cpy());
             Vec3 ABC = AB.cross(AC);
 
             // region AB

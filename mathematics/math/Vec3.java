@@ -210,6 +210,10 @@ public final class Vec3 {
         return out;
     }
 
+    public static Vec3 neg(Vec3 v) {
+    	return v.cpy().negate();
+    }
+    
     public static Vec3 cross(Vec3 a, Vec3 b) {
     	Vec3 out = new Vec3();
         out.x = a.y * b.z - a.z * b.y;
