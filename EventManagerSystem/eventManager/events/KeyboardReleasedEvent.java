@@ -15,10 +15,9 @@ public class KeyboardReleasedEvent extends StryckEvent {
 
     public int getKeyCode() { return keyCode; }
 
-    @Override
-    public String getName() { return "KeyboardReleasedEvent"; }
-    @Override
-    public StryckEventType getEventType() { return StryckEventType.KeyboardReleased; }
-    @Override
-    public int getCategoryFlags() { return StryckEventCategory.Input.getBit() | StryckEventCategory.Keyboard.getBit(); }
+    @Override public String getName() { return "KeyboardReleasedEvent"; }
+    @Override public StryckEventType getEventType() { return StryckEventType.KeyboardReleased; }
+    @Override public int getCategoryFlags() { 
+        return StryckEventCategory.Input.getBit() | StryckEventCategory.Keyboard.getBit(); 
+    }
 }

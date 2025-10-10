@@ -18,10 +18,9 @@ public class KeyboardPressedEvent extends StryckEvent {
     public int getKeyCode() { return keyCode; }
     public int getRepeatCount() { return repeatCount; }
 
-    @Override
-    public String getName() { return "KeyboardPressedEvent"; }
-    @Override
-    public StryckEventType getEventType() { return StryckEventType.KeyboardPressed; }
-    @Override
-    public int getCategoryFlags() { return StryckEventCategory.Input.getBit() | StryckEventCategory.Keyboard.getBit(); }
+    @Override public String getName() { return "KeyboardPressedEvent"; }
+    @Override public StryckEventType getEventType() { return StryckEventType.KeyboardPressed; }
+    @Override public int getCategoryFlags() { 
+        return StryckEventCategory.Input.getBit() | StryckEventCategory.Keyboard.getBit(); 
+    }
 }
