@@ -1,6 +1,7 @@
 package gameHandlers;
 
 import eventManager.events.*;
+import parametres.MouvementParametres;
 
 public class MouvementHandler {
 	private WindowFocusEvent WFE;
