@@ -39,11 +39,10 @@ public class Speed {
 	 * @return Vec3 Vector that indicates 3D space Movement
 	 */
 	public Vec3 getSpeedVector(double time) {
+		Vec3 movementVec3 = movement.getMovementVector();
 		return new Vec3(
-				(float) movement.getX() * calculateSpeed(mouvementSpeed,time) * movement.getMouvementSpeedMultiplier(),
-				(float) movement.getY() * calculateSpeed(mouvementSpeed,time) * movement.getMouvementSpeedMultiplier(),
-				(float) movement.getZ() * calculateSpeed(mouvementSpeed,time) * movement.getMouvementSpeedMultiplier()
-				);
-				
+				(float) (movementVec3.getX() * calculateSpeed(mouvementSpeed,time)),
+				(float) (movementVec3.getY() * calculateSpeed(mouvementSpeed,time)),
+				(float) (movementVec3.getZ() * calculateSpeed(mouvementSpeed,time)));	
 	}
 }
