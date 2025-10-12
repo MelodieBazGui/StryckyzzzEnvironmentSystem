@@ -83,7 +83,7 @@ public class Logger {
         String consoleLine = String.format("[%s] [%s] %s %s %s",
                 timestamp, classTag, level, msg, objTag);
 
-        // Console colorized
+        /* Console colorized
         switch (level) {
             case INFO  -> System.out.println(GREEN  + consoleLine + RESET);
             case WARN  -> System.out.println(YELLOW + consoleLine + RESET);
@@ -95,7 +95,7 @@ public class Logger {
             }
             default -> System.out.println(consoleLine);
         }
-
+		*/
         // File (no colors, keep objTag)
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(logFile, true))) {
             writer.write(entry + " " + objTag);
