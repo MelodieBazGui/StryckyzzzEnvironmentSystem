@@ -33,7 +33,7 @@ public class WindowFocusEvent {
         });
     }
 
-    public class WindowGainFocusEvent extends StryckEvent {
+    public static class WindowGainFocusEvent extends StryckEvent {
         public WindowGainFocusEvent() {
             logger.info("Created WindowGainFocusEvent");
         }
@@ -42,7 +42,7 @@ public class WindowFocusEvent {
         @Override public int getCategoryFlags() { return StryckEventCategory.Application.getBit(); }
     }
 
-    public class WindowLostFocusEvent extends StryckEvent {
+    public static class WindowLostFocusEvent extends StryckEvent {
         public WindowLostFocusEvent() {
             logger.info("Created WindowLostFocusEvent");
         }

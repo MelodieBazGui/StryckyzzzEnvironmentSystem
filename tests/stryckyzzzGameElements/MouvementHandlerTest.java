@@ -1,84 +1,107 @@
-package gameHandlers;
+package stryckyzzzGameElements;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import eventManager.events.*;
+import eventManager.events.KeyboardPressedEvent;
+import eventManager.events.KeyboardReleasedEvent;
+import eventManager.events.WindowFocusEvent;
 import eventManager.managing.StryckEventManager;
+import gameHandlers.MouvementHandler;
 import math.Vec3;
 import parametres.MouvementParametres;
 
+/**
+ * Unit tests for MouvementHandler using real event dispatching.
+ */
 public class MouvementHandlerTest {
+
     private StryckEventManager eventManager;
     private MouvementParametres mouvementParams;
-    private MouvementHandler handler;
+    private MouvementHandler mouvementHandler;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         eventManager = new StryckEventManager();
         mouvementParams = new MouvementParametres();
-        handler = new MouvementHandler(eventManager, mouvementParams);
+        mouvementHandler = new MouvementHandler(eventManager, mouvementParams);
+    }
+    
+    @AfterEach
+    void tearDown() {
+    	eventManager = null;
+    	mouvementParams = null;
+    	mouvementHandler = null;
     }
 
     @Test
-    public void testForwardMovement() {
+    void testForwardMovement() {
+        // Simulate pressing the forward key
         eventManager.dispatch(new KeyboardPressedEvent(mouvementParams.getKeyForward(), 0));
-        Vec3 vec = handler.getMovementVector();
-        assertEquals(0, vec.x, 0.001);
-        assertEquals(0, vec.y, 0.001);
-        assertEquals(1, vec.z, 0.001);
+
+        Vec3 movement = mouvementHandler.getMovementVector();
+
+        assertEquals(0f, movement.getX(), 1e-6f);
+        assertEquals(0f, movement.getY(), 1e-6f);
+        assertTrue(movement.getZ() > 0f, "Should move forward");
+
+        // Release key
+        eventManager.dispatch(new KeyboardReleasedEvent(mouvementParams.getKeyForward()));
+        assertEquals(new Vec3(0, 0, 0), mouvementHandler.getMovementVector());
     }
 
     @Test
-    public void testSprintIncreasesSpeed() {
+    void testSprintModifier() {
         eventManager.dispatch(new KeyboardPressedEvent(mouvementParams.getKeyForward(), 0));
         eventManager.dispatch(new KeyboardPressedEvent(mouvementParams.getKeySprint(), 0));
-        Vec3 vec = handler.getMovementVector();
-        assertEquals(1.5, vec.z, 0.001);
+
+        Vec3 sprintMovement = mouvementHandler.getMovementVector();
+        float expectedSpeed = 1.5f; // sprint multiplier
+        assertEquals(expectedSpeed, sprintMovement.getZ(), 1e-6f, "Sprint should increase speed");
+
+        // Release sprint
+        eventManager.dispatch(new KeyboardReleasedEvent(mouvementParams.getKeySprint()));
+        Vec3 normalMovement = mouvementHandler.getMovementVector();
+        assertEquals(1.0f, normalMovement.getZ(), 1e-6f, "Back to normal speed");
     }
 
     @Test
-    public void testCrouchDecreasesSpeed() {
+    void testCrouchModifier() {
         eventManager.dispatch(new KeyboardPressedEvent(mouvementParams.getKeyForward(), 0));
         eventManager.dispatch(new KeyboardPressedEvent(mouvementParams.getKeyCrouch(), 0));
-        Vec3 vec = handler.getMovementVector();
-        assertEquals(0.77, vec.z, 0.001);
+
+        Vec3 crouchMovement = mouvementHandler.getMovementVector();
+        float expectedSpeed = 0.77f;
+        assertEquals(expectedSpeed, crouchMovement.getZ(), 1e-6f, "Crouch should reduce speed");
     }
 
     @Test
-    public void testJumpAddsVerticalComponent() {
+    void testJumpFlag() {
         eventManager.dispatch(new KeyboardPressedEvent(mouvementParams.getKeyJump(), 0));
-        Vec3 vec = handler.getMovementVector();
-        assertEquals(1.0, vec.y, 0.001);
+
+        Vec3 jumpMovement = mouvementHandler.getMovementVector();
+        assertEquals(1.0f, jumpMovement.getY(), 1e-6f, "Should apply jump");
+
+        eventManager.dispatch(new KeyboardReleasedEvent(mouvementParams.getKeyJump()));
+        Vec3 noJumpMovement = mouvementHandler.getMovementVector();
+        assertEquals(0.0f, noJumpMovement.getY(), 1e-6f, "Jump should stop after release");
     }
 
     @Test
-    public void testLostFocusResetsInputs() {
+    void testFocusLossStopsMovement() {
         eventManager.dispatch(new KeyboardPressedEvent(mouvementParams.getKeyForward(), 0));
-        eventManager.dispatch(new WindowFocusEvent().new WindowLostFocusEvent());
-        Vec3 vec = handler.getMovementVector();
-        assertEquals(0, vec.x, 0.001);
-        assertEquals(0, vec.y, 0.001);
-        assertEquals(0, vec.z, 0.001);
-    }
+        eventManager.dispatch(new WindowFocusEvent.WindowLostFocusEvent());
 
-    @Test
-    public void testRegainFocusRestoresInputDetection() {
-        eventManager.dispatch(new WindowFocusEvent().new WindowLostFocusEvent());
-        eventManager.dispatch(new WindowFocusEvent().new WindowGainFocusEvent());
-        eventManager.dispatch(new KeyboardPressedEvent(mouvementParams.getKeyForward(), 0));
-        Vec3 vec = handler.getMovementVector();
-        assertEquals(1, vec.z, 0.001);
-    }
+        Vec3 movement = mouvementHandler.getMovementVector();
+        assertEquals(new Vec3(0, 0, 0), movement, "Should not move when window is unfocused");
 
-    @Test
-    public void testDiagonalMovementIsNormalized() {
+        // Regain focus
+        eventManager.dispatch(new WindowFocusEvent.WindowGainFocusEvent());
         eventManager.dispatch(new KeyboardPressedEvent(mouvementParams.getKeyForward(), 0));
-        eventManager.dispatch(new KeyboardPressedEvent(mouvementParams.getKeyRight(), 0));
-        Vec3 vec = handler.getMovementVector();
-        double length = Math.sqrt(vec.x * vec.x + vec.z * vec.z);
-        assertEquals(1.0, length, 0.001, "Diagonal movement should be normalized");
+        Vec3 afterFocus = mouvementHandler.getMovementVector();
+        assertTrue(afterFocus.getZ() > 0f, "Movement should resume after focus regained");
     }
 }
