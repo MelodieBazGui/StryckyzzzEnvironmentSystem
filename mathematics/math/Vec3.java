@@ -193,27 +193,17 @@ public final class Vec3 {
     // Static Utility (no allocs)
     // -------------------------
     public static Vec3 add(Vec3 a, Vec3 b) {
-    	Vec3 out = new Vec3();
-        out.x = a.x + b.x;
-        out.y = a.y + b.y;
-        out.z = a.z + b.z;
-        return out;
+        return new Vec3(
+        		a.x + b.x,
+        		a.y + b.y,
+        		a.z + b.z);
     }
 
     public static Vec3 sub(Vec3 a, Vec3 b) {
-    	Vec3 out = new Vec3();
-        out.x = a.x - b.x;
-        out.y = a.y - b.y;
-        out.z = a.z - b.z;
-        return out;
-    }
-
-    public static Vec3 scl(Vec3 a, float s) {
-    	Vec3 out = new Vec3();
-        out.x = a.x * s;
-        out.y = a.y * s;
-        out.z = a.z * s;
-        return out;
+        return new Vec3(
+        		a.x - b.x,
+                a.y - b.y,
+                a.z - b.z);
     }
 
     public static Vec3 neg(Vec3 v) {
@@ -221,15 +211,24 @@ public final class Vec3 {
     }
     
     public static Vec3 cross(Vec3 a, Vec3 b) {
-    	Vec3 out = new Vec3();
-        out.x = a.y * b.z - a.z * b.y;
-        out.y = a.z * b.x - a.x * b.z;
-        out.z = a.x * b.y - a.y * b.x;
-        return out;
+        return new Vec3(
+        		a.y * b.z - a.z * b.y,
+                a.z * b.x - a.x * b.z,
+                a.x * b.y - a.y * b.x
+        		);
+        
     }
 
+    public static Vec3 scl(Vec3 v, float scalar) {
+        return new Vec3(v.x * scalar, v.y * scalar, v.z * scalar);
+    }
+    
     public static float dot(Vec3 a, Vec3 b) {
         return a.x * b.x + a.y * b.y + a.z * b.z;
     }
+    
+	public boolean isZero() {
+		return this.equals(new Vec3(0f,0f,0f));
+	}
     
 }
