@@ -5,6 +5,10 @@ import utils.Logger;
 
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.function.BooleanSupplier;
+
+import ecs.systems.EntityManager;
+import ecs.systems.SystemManager;
 
 /**
  * Thread-safe ECS with ID registry, component pools, and deferred updates.
@@ -107,4 +111,9 @@ public class ECSManager {
     public EntityManager getEntityManager() {
         return entityManager;
     }
+
+	public BooleanSupplier isEntityAlive(int id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

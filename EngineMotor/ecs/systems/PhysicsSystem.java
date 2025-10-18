@@ -1,14 +1,15 @@
 package ecs.systems;
 
-import math.Vec3;
-import java.util.Map;
-
 import ecs.*;
 import ecs.components.*;
+import math.Vec3;
+import java.util.Collection;
+import java.util.Map;
 
 /**
- * Physics system: updates all entities with Transform and Rigidbody components.
- * Explicit types — no use of 'var' for compatibility.
+ * Physics system:
+ * Updates all entities that have both TransformComponent and RigidbodyComponent.
+ * Fully typed, no use of 'var' for older compiler compatibility.
  */
 public class PhysicsSystem extends SystemBase {
 
@@ -16,24 +17,35 @@ public class PhysicsSystem extends SystemBase {
     public void update(ECSManager ecs, float deltaTime) {
         ComponentManager cm = ecs.getComponentManager();
 
-        Map<Integer, TransformComponent> transforms = cm.entriesForType(TransformComponent.class);
-        Map<Integer, RigidbodyComponent> rigidbodies = cm.entriesForType(RigidbodyComponent.class);
+        // Get component pools
+        Collection<Map.Entry<Integer, TransformComponent>> transforms =
+                cm.entriesForType(TransformComponent.class);
+        Collection<Map.Entry<Integer, RigidbodyComponent>> rigidbodies =
+                cm.entriesForType(RigidbodyComponent.class);
 
-        for (Map.Entry<Integer, RigidbodyComponent> entry : rigidbodies.entrySet()) {
-            int entity = entry.getKey();
+        // To speed up lookups, we’ll check transform presence directly
+        for (Map.Entry<Integer, RigidbodyComponent> entry : rigidbodies) {
+            int entityId = entry.getKey();
             RigidbodyComponent rb = entry.getValue();
-            TransformComponent tf = transforms.get(entity);
 
-            if (tf == null) continue;
+            TransformComponent tf = cm.getComponent(entityId, TransformComponent.class);
+            if (tf == null) continue; // Only update entities with both components
 
-            rb.velocity.add(Vec3.scl(rb.acceleration, deltaTime));
+            // --- Physics Integration ---
+            // Update velocity: v += a * dt
+            Vec3 deltaVel = Vec3.scl(rb.acceleration, deltaTime);
+            rb.velocity.add(deltaVel);
 
-            tf.position.add(Vec3.scl(rb.velocity, deltaTime));
+            // Update position: p += v * dt
+            Vec3 deltaPos = Vec3.scl(rb.velocity, deltaTime);
+            tf.position.add(deltaPos);
 
+            // Apply gravity if enabled
             if (rb.useGravity) {
-                tf.position.add(new Vec3(0, -9.81f * deltaTime, 0));
+                tf.position.add(new Vec3(0f,-9.81f * deltaTime, 0f));
             }
 
+            // Apply drag (exponential decay)
             rb.velocity.scl(1.0f - rb.drag * deltaTime);
         }
     }

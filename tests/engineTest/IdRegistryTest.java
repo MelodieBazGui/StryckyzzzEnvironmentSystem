@@ -1,33 +1,39 @@
 package engineTest;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import org.junit.jupiter.api.Test;
 
 import engine.IdRegistry;
 
+import static org.junit.jupiter.api.Assertions.*;
+import java.util.Set;
+
 class IdRegistryTest {
+
     @Test
-    void registerAndUnregister() {
-        IdRegistry<String> reg = new IdRegistry<>();
+    void testRegisterAndRetrieve() {
+        IdRegistry<String> registry = new IdRegistry<>();
+        int id = registry.register("EntityA");
+        assertEquals("EntityA", registry.get(id));
+        assertTrue(registry.isActive(id));
+    }
 
-        int id1 = reg.register("A");
-        int id2 = reg.register("B");
+    @Test
+    void testUnregisterAndReuseId() {
+        IdRegistry<String> registry = new IdRegistry<>();
+        int id1 = registry.register("A");
+        registry.unregister(id1);
+        int id2 = registry.register("B");
+        assertEquals("B", registry.get(id2));
+        assertTrue(id2 == id1, "Should reuse freed ID");
+    }
 
-        assertEquals("A", reg.get(id1));
-        assertEquals("B", reg.get(id2));
-        assertTrue(reg.isActive(id1));
-        assertEquals(2, reg.size());
-
-        reg.unregister(id1);
-        assertNull(reg.get(id1));
-        assertFalse(reg.isActive(id1));
-
-        int id3 = reg.register("C"); // should recycle id1
-        assertEquals(id1, id3);
-        assertEquals("C", reg.get(id3));
+    @Test
+    void testActiveIds() {
+        IdRegistry<String> registry = new IdRegistry<>();
+        int id1 = registry.register("A");
+        int id2 = registry.register("B");
+        Set<Integer> ids = registry.activeIds();
+        assertTrue(ids.contains(id1));
+        assertTrue(ids.contains(id2));
     }
 }

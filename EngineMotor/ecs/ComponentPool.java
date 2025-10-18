@@ -1,16 +1,18 @@
 package ecs;
 
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Stores components of one type in a contiguous structure.
  * Provides O(1) access by entityId and high cache locality.
  */
-public class ComponentPool<T> {
-    private final Map<Integer, T> components = new ConcurrentHashMap<>();
+@SuppressWarnings("hiding")
+public class ComponentPool<Component> {
+    private final Map<Integer, Component> components = new ConcurrentHashMap<>();
 
-    public void add(int entityId, T component) {
+    public void add(int entityId, Component component) {
         components.put(entityId, component);
     }
 
@@ -18,7 +20,7 @@ public class ComponentPool<T> {
         components.remove(entityId);
     }
 
-    public T get(int entityId) {
+    public Component get(int entityId) {
         return components.get(entityId);
     }
 
@@ -26,11 +28,11 @@ public class ComponentPool<T> {
         return components.containsKey(entityId);
     }
 
-    public Collection<Map.Entry<Integer, T>> entries() {
+    public Collection<Entry<Integer, Component>> entries() {
         return components.entrySet();
     }
 
-    public Collection<T> values() {
+    public Collection<Component> values() {
         return components.values();
     }
 
