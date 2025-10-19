@@ -1,194 +1,211 @@
 package audio.dsp;
 
 import java.util.Arrays;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
- * Streaming FFT convolution using overlap-add.
- * - Input/output are float[] per-channel (mono or stereo).
- * - IR is float[] per-channel.
+ * Thread-safe, normalized FFT-based convolution engine.
+ * Supports single and multi-channel input.
  *
- * Usage:
- *   FFTConvolver conv = new FFTConvolver(ir, blockSize);
- *   float[] out = conv.process(inputBlock); // inputBlock length == blockSize
+ * Designed for real-time reverb, spatial audio, and zone mixing.
  *
- * Internals:
- *  - Uses power-of-two FFT with radix-2 iterative algorithm (simple).
- *  - For reasonable IR sizes (<= 65536) this performs well in Java.
+ * Author: EmeJay, 2025
  */
-public final class FFTConvolver {
+public class FFTConvolver {
+    private final int blockSize;
+    private final int fftSize;
+    private final float[] impulseFFT; // precomputed FFT of impulse
+    private final ConcurrentMap<Long, float[]> threadBuffers = new ConcurrentHashMap<>();
 
-    private final int blockSize;      // frames per block
-    private final int fftSize;        // power-of-two >= blockSize + irLen - 1
-    private final int halfSize;       // fftSize/2
-    private final float[] irFreqReal; // IR FFT real (interleaved as real, imag)
-    private final float[] irFreqImag;
-    private final float[] overlap;    // overlap buffer length = irLen - 1
-    private final int irLen;
+    private final FFT fft;
 
-    public FFTConvolver(float[] ir, int blockSize) {
-        if (ir == null || ir.length == 0)
-            throw new IllegalArgumentException("IR must not be empty");
-        this.irLen = ir.length;
+    /**
+     * Create a new FFT convolver with a given impulse response and block size.
+     * @param impulseResponse impulse response (time-domain samples)
+     * @param blockSize number of samples processed per block
+     */
+    public FFTConvolver(float[] impulseResponse, int blockSize) {
         this.blockSize = blockSize;
-        int needed = blockSize + irLen - 1;
-        this.fftSize = nextPowerOfTwo(needed);
-        this.halfSize = fftSize / 2;
-        // precompute IR FFT
-        float[] padded = new float[fftSize];
-        System.arraycopy(ir, 0, padded, 0, irLen);
-        ComplexFFT.fft(padded, fftSize); // packs into real,imag arrays via helper
-        this.irFreqReal = ComplexFFT.getReal(); // internal static-results
-        this.irFreqImag = ComplexFFT.getImag();
-        // overlap buffer
-        this.overlap = new float[irLen - 1];
+        this.fftSize = nextPowerOfTwo(blockSize * 2);
+        this.fft = new FFT(fftSize);
+
+        float[] paddedImpulse = Arrays.copyOf(impulseResponse, fftSize);
+        this.impulseFFT = new float[fftSize * 2];
+        fft.forward(paddedImpulse, impulseFFT);
     }
 
     /**
-     * Process a single input block (length == blockSize) and return convolved output
-     * of length blockSize + irLen - 1.
+     * Process a single-channel buffer through the convolver.
+     * @param input samples
+     * @return convolved (same length as input)
      */
-    public float[] process(float[] inputBlock) {
-        if (inputBlock.length != blockSize)
-            throw new IllegalArgumentException("inputBlock length must equal blockSize");
+    public float[] process(float[] input) {
+        float[] fftBuf = threadBuffers.computeIfAbsent(Thread.currentThread().getId(),
+                id -> new float[fftSize * 2]);
 
-        // zero-pad input to fftSize
-        float[] inPadded = new float[fftSize];
-        System.arraycopy(inputBlock, 0, inPadded, 0, blockSize);
+        Arrays.fill(fftBuf, 0);
+        float[] paddedInput = Arrays.copyOf(input, fftSize);
+        fft.forward(paddedInput, fftBuf);
 
-        // FFT input
-        ComplexFFT.fft(inPadded, fftSize);
-        float[] inReal = ComplexFFT.getReal();
-        float[] inImag = ComplexFFT.getImag();
+        multiplyComplexInPlace(fftBuf, impulseFFT);
 
-        // multiply inFreq * irFreq (complex multiply)
-        float[] outReal = new float[fftSize];
-        float[] outImag = new float[fftSize];
-        for (int k = 0; k < fftSize; k++) {
-            float a = inReal[k];
-            float b = inImag[k];
-            float c = irFreqReal[k];
-            float d = irFreqImag[k];
-            // (a+ib)*(c+id) = (ac - bd) + i(ad + bc)
-            outReal[k] = a * c - b * d;
-            outImag[k] = a * d + b * c;
+        fft.inverse(fftBuf, true); // normalized inverse FFT
+
+        // return only the valid block portion
+        float[] output = new float[input.length];
+        for (int i = 0; i < input.length; i++) {
+            output[i] = fftBuf[i * 2]; // take real parts only
         }
 
-        // inverse FFT result into time domain (re-using ComplexFFT)
-        ComplexFFT.ifft(outReal, outImag, fftSize);
-        float[] time = ComplexFFT.getReal(); // real part contains samples length fftSize
-
-        // sum overlap + current block output (length = blockSize + irLen - 1)
-        int outLen = blockSize + irLen - 1;
-        float[] output = new float[outLen];
-        // first add overlap
-        int copyOverlap = Math.min(overlap.length, outLen);
-        System.arraycopy(overlap, 0, output, 0, copyOverlap);
-        // add time (first outLen samples)
-        for (int i = 0; i < outLen; i++) {
-            output[i] += time[i];
-        }
-        // compute new overlap = tail of time (positions blockSize .. outLen-1)
-        int newOverlapLen = irLen - 1;
-        Arrays.fill(overlap, 0f);
-        for (int i = 0; i < newOverlapLen; i++) {
-            int srcIdx = blockSize + i;
-            if (srcIdx < time.length) overlap[i] = time[srcIdx];
-            else overlap[i] = 0f;
-        }
         return output;
     }
 
-    private static int nextPowerOfTwo(int v) {
-        int p = 1;
-        while (p < v) p <<= 1;
-        return p;
+    /**
+     * Process multiple channels in parallel.
+     * @param input multi-channel input [channel][samples]
+     * @return multi-channel output
+     */
+    public float[][] processMulti(float[][] input) {
+        float[][] output = new float[input.length][];
+        Arrays.parallelSetAll(output, ch -> process(input[ch]));
+        return output;
     }
 
-    // ------------------------------
-    // Internal FFT helper (Cooley-Tukey radix-2 iterative)
-    // Stores results in ComplexFFT.getReal()/getImag()
-    // ------------------------------
-    private static final class ComplexFFT {
-        // We'll use thread-local arrays to avoid repeated allocation when called from multiple convolvers
-        private static float[] real;
-        private static float[] imag;
+    /**
+     * Frequency-domain multiply: (a + bi)*(c + di) = (ac−bd) + (ad+bc)i
+     */
+    private static void multiplyComplexInPlace(float[] a, float[] b) {
+        for (int i = 0; i < a.length; i += 2) {
+            float ar = a[i];
+            float ai = a[i + 1];
+            float br = b[i];
+            float bi = b[i + 1];
 
-        static void fft(float[] data, int n) {
-            // 'data' is real time-domain array length n, we compute full complex FFT
-            // Build complex arrays
-            ensureCapacity(n);
-            for (int i = 0; i < n; i++) {
-                real[i] = data[i];
-                imag[i] = 0f;
-            }
-            fftInPlace(real, imag, n);
+            a[i]     = ar * br - ai * bi;
+            a[i + 1] = ar * bi + ai * br;
         }
+    }
 
-        static void ifft(float[] r, float[] im, int n) {
-            ensureCapacity(n);
-            // Copy input
-            System.arraycopy(r, 0, real, 0, n);
-            System.arraycopy(im, 0, imag, 0, n);
+    private static int nextPowerOfTwo(int n) {
+        int v = 1;
+        while (v < n) v <<= 1;
+        return v;
+    }
 
-            // Conjugate for IFFT
-            for (int i = 0; i < n; i++) imag[i] = -imag[i];
+    /**
+     * Simple float-based FFT implementation (Cooley–Tukey radix-2).
+     * Not super optimized, but correct and stable for audio.
+     */
+    private static class FFT {
+        private final int size;
+        private final float[] cosTable;
+        private final float[] sinTable;
 
-            fftInPlace(real, imag, n);
-
-            // Conjugate back and scale by 1/n
-            float scale = 1.0f / n;
-            for (int i = 0; i < n; i++) {
-                real[i] = real[i] * scale;
-                imag[i] = -imag[i] * scale;
-            }
-        }
-
-
-        static float[] getReal() { return real; }
-        static float[] getImag() { return imag; }
-
-        private static void ensureCapacity(int n) {
-            if (real == null || real.length < n) {
-                real = new float[n];
-                imag = new float[n];
+        FFT(int size) {
+            this.size = size;
+            cosTable = new float[size / 2];
+            sinTable = new float[size / 2];
+            for (int i = 0; i < size / 2; i++) {
+                double angle = -2.0 * Math.PI * i / size;
+                cosTable[i] = (float) Math.cos(angle);
+                sinTable[i] = (float) Math.sin(angle);
             }
         }
 
-        /** iterative in-place FFT */
-        private static void fftInPlace(float[] r, float[] im, int n) {
-            int levels = 31 - Integer.numberOfLeadingZeros(n); // log2(n)
-            // bit-reverse copy
-            for (int i = 0; i < n; i++) {
-                int j = Integer.reverse(i) >>> (32 - levels);
-                if (j > i) {
-                    float tr = r[i]; r[i] = r[j]; r[j] = tr;
-                    float ti = im[i]; im[i] = im[j]; im[j] = ti;
-                }
-            }
-            for (int size = 2; size <= n; size <<= 1) {
-                int half = size >>> 1;
-                double theta = -2 * Math.PI / size;
-                double wpr = Math.cos(theta);
-                double wpi = Math.sin(theta);
-                for (int i = 0; i < n; i += size) {
-                    double wr = 1.0;
-                    double wi = 0.0;
-                    for (int j = 0; j < half; j++) {
-                        int evenIndex = i + j;
-                        int oddIndex = i + j + half;
-                        float er = (float) (wr * r[oddIndex] - wi * im[oddIndex]);
-                        float ei = (float) (wr * im[oddIndex] + wi * r[oddIndex]);
+        /** Forward FFT: fills dst as [real0, imag0, real1, imag1, ...] */
+        void forward(float[] src, float[] dst) {
+            int n = size;
+            Arrays.fill(dst, 0);
+            for (int i = 0; i < src.length && i < n; i++) dst[i * 2] = src[i];
 
-                        r[oddIndex] = r[evenIndex] - er;
-                        im[oddIndex] = im[evenIndex] - ei;
-                        r[evenIndex] += er;
-                        im[evenIndex] += ei;
+            bitReverse(dst, n);
 
-                        double tmp = wr;
-                        wr = tmp * wpr - wi * wpi;
-                        wi = tmp * wpi + wi * wpr;
+            for (int len = 2; len <= n; len <<= 1) {
+                int half = len >> 1;
+                int step = n / len;
+                for (int i = 0; i < n; i += len) {
+                    for (int k = 0; k < half; k++) {
+                        int even = (i + k) * 2;
+                        int odd = (i + k + half) * 2;
+                        float wr = cosTable[k * step];
+                        float wi = sinTable[k * step];
+                        float orr = dst[odd];
+                        float oii = dst[odd + 1];
+                        float tr = wr * orr - wi * oii;
+                        float ti = wr * oii + wi * orr;
+                        dst[odd] = dst[even] - tr;
+                        dst[odd + 1] = dst[even + 1] - ti;
+                        dst[even] += tr;
+                        dst[even + 1] += ti;
                     }
                 }
+            }
+        }
+
+        /** Inverse FFT, normalized if normalize=true */
+        void inverse(float[] data, boolean normalize) {
+            int n = size;
+
+            // conjugate
+            for (int i = 1; i < data.length; i += 2)
+                data[i] = -data[i];
+
+            // forward FFT
+            bitReverse(data, n);
+
+            for (int len = 2; len <= n; len <<= 1) {
+                int half = len >> 1;
+                int step = n / len;
+                for (int i = 0; i < n; i += len) {
+                    for (int k = 0; k < half; k++) {
+                        int even = (i + k) * 2;
+                        int odd = (i + k + half) * 2;
+                        float wr = cosTable[k * step];
+                        float wi = -sinTable[k * step]; // inverse uses -sin
+                        float orr = data[odd];
+                        float oii = data[odd + 1];
+                        float tr = wr * orr - wi * oii;
+                        float ti = wr * oii + wi * orr;
+                        data[odd] = data[even] - tr;
+                        data[odd + 1] = data[even + 1] - ti;
+                        data[even] += tr;
+                        data[even + 1] += ti;
+                    }
+                }
+            }
+
+            // conjugate again
+            for (int i = 1; i < data.length; i += 2)
+                data[i] = -data[i];
+
+            // normalize
+            if (normalize) {
+                float scale = 1f / n;
+                for (int i = 0; i < data.length; i++)
+                    data[i] *= scale;
+            }
+        }
+
+        private void bitReverse(float[] data, int n) {
+            int j = 0;
+            for (int i = 0; i < n; i++) {
+                if (i < j) {
+                    int i2 = i * 2;
+                    int j2 = j * 2;
+                    float tr = data[i2];
+                    float ti = data[i2 + 1];
+                    data[i2] = data[j2];
+                    data[i2 + 1] = data[j2 + 1];
+                    data[j2] = tr;
+                    data[j2 + 1] = ti;
+                }
+                int m = n >> 1;
+                while (j >= m && m > 0) {
+                    j -= m;
+                    m >>= 1;
+                }
+                j += m;
             }
         }
     }

@@ -1,10 +1,11 @@
 package ecs;
 
 import org.junit.jupiter.api.*;
+
+import audio.SoundManager;
+import audioTest.*;
 import ecs.components.*;
 import ecs.systems.SoundSystem;
-import audio.*;
-
 
 import static org.junit.jupiter.api.Assertions.*;
 

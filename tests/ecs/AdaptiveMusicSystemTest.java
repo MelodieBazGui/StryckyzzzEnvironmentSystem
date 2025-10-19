@@ -1,7 +1,6 @@
 package ecs;
 
-import ecs.*;
-import ecs.components.AdaptiveMusicSystem;
+import ecs.systems.AdaptiveMusicSystem;
 import ecs.components.AudioLayerComponent;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
