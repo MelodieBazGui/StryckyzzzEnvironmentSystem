@@ -9,7 +9,9 @@ package math;
 public final class Vec3 {
 
     private float x, y, z;
-
+    
+    private static final Vec3 ZERO_VEC = new Vec3();
+    
     // -------------------------
     // Constructors
     // -------------------------
@@ -228,7 +230,7 @@ public final class Vec3 {
     }
     
 	public boolean isZero() {
-		return this.equals(new Vec3(0f,0f,0f));
+		return this.equals(ZERO_VEC);
 	}
     
 }
