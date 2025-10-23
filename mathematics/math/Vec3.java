@@ -141,6 +141,19 @@ public final class Vec3 {
         return this;
     }
 
+    /** Squared distance between this vector and another. */
+    public float distanceSquared(Vec3 other) {
+        float dx = x - other.x;
+        float dy = y - other.y;
+        float dz = z - other.z;
+        return dx * dx + dy * dy + dz * dz;
+    }
+
+    /** Euclidean distance between this vector and another. */
+    public float distance(Vec3 other) {
+        return (float) Math.sqrt(distanceSquared(other));
+    }
+    
     // -------------------------
     // Utility methods
     // -------------------------

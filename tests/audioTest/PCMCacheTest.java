@@ -2,7 +2,7 @@ package audioTest;
 
 import org.junit.jupiter.api.Test;
 
-import audioTest.dsp.FFTConvolver;
+import audio.dsp.FFTConvolver;
 
 import static org.junit.jupiter.api.Assertions.*;
 
