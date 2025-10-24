@@ -1,6 +1,7 @@
 package audio.config;
 
 import java.util.*;
+import utils.Logger;
 
 /**
  * AudioProfile
@@ -12,6 +13,8 @@ import java.util.*;
  */
 public class AudioProfile {
 
+	private static Logger logger = new Logger(AudioProfile.class);
+	
     // Basic mix controls
     private float volume = 1.0f;
     private float reverbMix = 0.3f;
@@ -38,21 +41,13 @@ public class AudioProfile {
     public AudioProfile() {}
 
     public AudioProfile(String name) {
-    	this.name = name;
+        this.name = name;
+        logger.info("Instatiated AudioProfile");
     }
-    
+
     public AudioProfile(AudioProfile other) {
-        this.volume = other.volume;
-        this.reverbMix = other.reverbMix;
-        this.lowPassCutoff = other.lowPassCutoff;
-        this.highPassCutoff = other.highPassCutoff;
-        this.dynamicRange = other.dynamicRange;
-        this.spatialBlend = other.spatialBlend;
-        this.distanceRolloff = other.distanceRolloff;
-        this.maxDistance = other.maxDistance;
-        this.name = other.name;
-        this.environmentType = other.environmentType;
-        this.eqCurve.putAll(other.eqCurve);
+        copyFrom(other);
+        logger.info("Instatiated AudioProfile from other AudioProfie");
     }
 
     // -----------------------------
@@ -157,6 +152,115 @@ public class AudioProfile {
         return blended;
     }
 
+    /** Merges another profile’s parameters into this one (useful for AudioConfigManager). */
+    public void merge(AudioProfile other) {
+        if (other == null) return;
+        this.volume = (this.volume + other.volume) / 2f;
+        this.reverbMix = (this.reverbMix + other.reverbMix) / 2f;
+        this.dynamicRange = (this.dynamicRange + other.dynamicRange) / 2f;
+        this.spatialBlend = (this.spatialBlend + other.spatialBlend) / 2f;
+        this.environmentType = other.environmentType != null ? other.environmentType : this.environmentType;
+
+        for (Map.Entry<Float, Float> e : other.eqCurve.entrySet()) {
+            float freq = e.getKey();
+            float gain = e.getValue();
+            float current = this.eqCurve.getOrDefault(freq, 0f);
+            this.eqCurve.put(freq, (current + gain) / 2f);
+        }
+    }
+
+    /** Copies all properties from another AudioProfile. */
+    public void copyFrom(AudioProfile other) {
+        if (other == null) return;
+        this.volume = other.volume;
+        this.reverbMix = other.reverbMix;
+        this.lowPassCutoff = other.lowPassCutoff;
+        this.highPassCutoff = other.highPassCutoff;
+        this.dynamicRange = other.dynamicRange;
+        this.spatialBlend = other.spatialBlend;
+        this.distanceRolloff = other.distanceRolloff;
+        this.maxDistance = other.maxDistance;
+        this.name = other.name;
+        this.environmentType = other.environmentType;
+        this.eqCurve.clear();
+        this.eqCurve.putAll(other.eqCurve);
+    }
+
+    /** Deep clone for safety. */
+    public AudioProfile copy() {
+        return new AudioProfile(this);
+    }
+
+    /** Static helper to blend multiple profiles. */
+    public static AudioProfile blendList(List<AudioProfile> profiles) {
+        if (profiles == null || profiles.isEmpty()) return new AudioProfile();
+        if (profiles.size() == 1) return profiles.get(0).copy();
+
+        AudioProfile result = profiles.get(0).copy();
+        for (int i = 1; i < profiles.size(); i++) {
+            float t = (float) i / (profiles.size() - 1);
+            result = result.blend(profiles.get(i), t);
+        }
+        return result;
+    }
+
+    // -----------------------------
+    // Dynamic Property Interface
+    // -----------------------------
+    
+    public void setProperty(String key, String value) {
+        if (key == null || value == null) return;
+        key = key.toLowerCase(Locale.ROOT);
+
+        try {
+            switch (key) {
+                case "volume": setVolume(Float.parseFloat(value)); break;
+                case "reverbmix": setReverbMix(Float.parseFloat(value)); break;
+                case "lowpasscutoff": setLowPassCutoff(Float.parseFloat(value)); break;
+                case "highpasscutoff": setHighPassCutoff(Float.parseFloat(value)); break;
+                case "dynamicrange": setDynamicRange(Float.parseFloat(value)); break;
+                case "spatialblend": setSpatialBlend(Float.parseFloat(value)); break;
+                case "distancerolloff": setDistanceRolloff(Float.parseFloat(value)); break;
+                case "maxdistance": setMaxDistance(Float.parseFloat(value)); break;
+                case "environmenttype":
+                    setEnvironmentType(value);
+                    break;
+                case "name":
+                    setName(value);
+                    break;
+                default:
+                    logger.error("Unknown AudioProfile property: " + key, null);
+            }
+        } catch (NumberFormatException e) {
+            logger.error("Invalid numeric value for property '" + key + "': " + value, e);
+        }
+    }
+
+    /** Retrieves a property value as a string (for serialization/debug). */
+    public String getProperty(String key) {
+        if (key == null) return null;
+        key = key.toLowerCase(Locale.ROOT);
+        switch (key) {
+            case "volume": return String.valueOf(volume);
+            case "reverbmix": return String.valueOf(reverbMix);
+            case "lowpasscutoff": return String.valueOf(lowPassCutoff);
+            case "highpasscutoff": return String.valueOf(highPassCutoff);
+            case "dynamicrange": return String.valueOf(dynamicRange);
+            case "spatialblend": return String.valueOf(spatialBlend);
+            case "distancerolloff": return String.valueOf(distanceRolloff);
+            case "maxdistance": return String.valueOf(maxDistance);
+            case "environmenttype": return environmentType;
+            case "name": return name;
+            default: return null;
+        }
+    }
+
+    /** Overload for direct numeric input */
+    public void setProperty(String key, float value) {
+        setProperty(key, String.valueOf(value));
+    }
+
+    
     // -----------------------------
     // Math Helpers
     // -----------------------------
@@ -168,16 +272,6 @@ public class AudioProfile {
         if (v < min) return min;
         if (v > max) return max;
         return v;
-    }
-    
-    private static float clamp01(float v) {
-        return Math.max(0f, Math.min(1f, v));
-    }
-
-    private static float clampFreq(float f) {
-        if (Float.isNaN(f) || f <= 10f) return 10f;
-        if (f > 48000f) return 48000f;
-        return f;
     }
 
     // -----------------------------
@@ -211,8 +305,8 @@ public class AudioProfile {
     @Override
     public String toString() {
         return String.format(Locale.US,
-                "AudioProfile{name='%s', env='%s', vol=%.2f, reverb=%.2f, LP=%.1fHz, HP=%.1fHz, dyn=%.2f, spatial=%.2f, dist=%.1f}",
+                "AudioProfile{name='%s', env='%s', vol=%.2f, reverb=%.2f, LP=%.1fHz, HP=%.1fHz, dyn=%.2f, spatial=%.2f, dist=%.1f, eqPoints=%d}",
                 name, environmentType, volume, reverbMix, lowPassCutoff, highPassCutoff,
-                dynamicRange, spatialBlend, maxDistance);
+                dynamicRange, spatialBlend, maxDistance, eqCurve.size());
     }
 }
