@@ -11,28 +11,37 @@ import ecs.systems.EntityManager;
 import ecs.systems.SystemManager;
 
 /**
- * Thread-safe ECS with ID registry, component pools, and deferred updates.
+ * Thread-safe ECS core:
+ * - Entity registry and ID management
+ * - Component storage and retrieval
+ * - Deferred command buffer (safe modifications after system updates)
+ * - Parallel system updates using a fixed thread pool
+ * - Complies with existing MovementSystem and ECS API structure
  */
-public class ECSManager {
+public final class ECSManager {
     private static final Logger logger = new Logger(ECSManager.class);
 
+    // === Core Managers ===
     private final IdRegistry<Entity> entities = new IdRegistry<>();
-    private final ComponentManager components = new ComponentManager();
+    private final ComponentManager componentManager = new ComponentManager();
+    private final EntityManager entityManager = new EntityManager();
+    private final SystemManager systemManager = new SystemManager();
     private final DeferredCommandBuffer commandBuffer = new DeferredCommandBuffer();
+
+    // === Systems ===
     private final List<SystemBase> systems = new CopyOnWriteArrayList<>();
+
+    // === Thread Pool ===
     private final ExecutorService pool;
 
-	private ComponentManager componentManager;
-	private EntityManager entityManager;
-	private SystemManager systemManager;
-
     public ECSManager() {
-        int threads = Math.max(2, Runtime.getRuntime().availableProcessors() - 1);
-        pool = Executors.newFixedThreadPool(threads);
-        this.componentManager = new ComponentManager();
-        this.entityManager = new EntityManager();
+        final int threads = Math.max(2, Runtime.getRuntime().availableProcessors() - 1);
+        this.pool = Executors.newFixedThreadPool(threads);
     }
 
+    // -------------------------------------------------------------------------
+    // Entity API
+    // -------------------------------------------------------------------------
     public Entity createEntity() {
         Entity e = new Entity();
         registerEntity(e);
@@ -41,69 +50,135 @@ public class ECSManager {
 
     protected void registerEntity(Entity e) {
         entities.register(e);
+        entityManager.addEntity(e);
     }
 
     public void destroyEntity(int id) {
+        componentManager.removeAllComponents(id);
         entities.unregister(id);
+        entityManager.removeEntity(id);
     }
 
-    // ------------- Component API -------------
+    public boolean isAlive(int id) {
+        return entities.contains(id);
+    }
 
-    public <T extends Component> void addComponentNow(int id, T c) {
-        components.addComponent(id, c);
+    public BooleanSupplier isEntityAlive(int id) {
+        return () -> entities.contains(id);
+    }
+
+    public Entity getEntity(int id) {
+        return entities.get(id);
+    }
+
+    /** Snapshot of all current entities. Thread-safe copy. */
+    public List<Entity> getAllEntities() {
+        return new ArrayList<>(entities.values());
+    }
+
+    /** Returns all entities that have ALL specified component types. */
+    @SafeVarargs
+    public final List<Entity> getEntitiesWith(Class<? extends Component>... types) {
+        Collection<Entity> src = entities.values();
+        if (src.isEmpty()) return Collections.emptyList();
+
+        List<Entity> out = new ArrayList<>(src.size());
+        outer:
+        for (Entity e : src) {
+            int id = e.getId();
+            for (Class<? extends Component> t : types) {
+                if (!componentManager.hasComponent(id, t)) continue outer;
+            }
+            out.add(e);
+        }
+        return out;
+    }
+
+    // -------------------------------------------------------------------------
+    // Component API
+    // -------------------------------------------------------------------------
+    public <T extends Component> void addComponentNow(int id, T component) {
+        componentManager.addComponent(id, component);
     }
 
     public <T extends Component> void removeComponentNow(int id, Class<T> type) {
-        components.removeComponent(id, type);
+        componentManager.removeComponent(id, type);
     }
 
     public <T extends Component> T getComponent(int id, Class<T> type) {
-        return components.getComponent(id, type);
+        return componentManager.getComponent(id, type);
     }
 
     public <T extends Component> boolean hasComponent(int id, Class<T> type) {
-        return components.hasComponent(id, type);
+        return componentManager.hasComponent(id, type);
     }
 
-    // ------------- Deferred API -------------
-
-    public DeferredCommandBuffer commands() {
-        return commandBuffer;
-    }
-
-    // ------------- Systems -------------
-
+    // -------------------------------------------------------------------------
+    // Systems API
+    // -------------------------------------------------------------------------
     public void addSystem(SystemBase system) {
         systems.add(system);
+        systemManager.addSystem(system);
+        try {
+            system.initialize(this);
+        } catch (Throwable t) {
+            logger.error("System initialize failed: " + system.getClass().getSimpleName(), t);
+        }
     }
 
+    public void removeSystem(SystemBase system) {
+        systems.remove(system);
+        systemManager.removeSystem(system);
+    }
+
+    /**
+     * Runs all systems (parallel if possible), then flushes deferred commands.
+     */
     public void update(float dt) {
         if (systems.isEmpty()) return;
 
-        List<Callable<Void>> tasks = new ArrayList<>();
-        for (SystemBase system : systems) {
+        List<Callable<Void>> tasks = new ArrayList<>(systems.size());
+        for (SystemBase s : systems) {
             tasks.add(() -> {
-                system.update(this, dt);
+                try {
+                    s.update(this, dt);
+                } catch (Throwable t) {
+                    logger.error("System update failed: " + s.getClass().getSimpleName(), t);
+                }
                 return null;
             });
         }
 
         try {
             pool.invokeAll(tasks);
-        } catch (InterruptedException e) {
+        } catch (InterruptedException ie) {
             Thread.currentThread().interrupt();
-            logger.error("ECS interrupted: " + e.getMessage(),e);
+            logger.error("ECS update interrupted", ie);
         }
 
-        // Apply deferred commands safely
-        commandBuffer.flush();
+        // Apply deferred add/remove component/entity commands
+        try {
+            commandBuffer.flush();
+        } catch (Throwable t) {
+            logger.error("Deferred command flush failed", t);
+        }
     }
 
     public void shutdown() {
+        for (SystemBase s : systems) {
+            try {
+                s.shutdown();
+            } catch (Throwable t) {
+                logger.warn("System shutdown failed: " + s.getClass().getSimpleName(), t);
+            }
+        }
+        systems.clear();
         pool.shutdownNow();
     }
 
-    //------------- Getters for Managers -------------
+    // -------------------------------------------------------------------------
+    // Accessors
+    // -------------------------------------------------------------------------
     public ComponentManager getComponentManager() {
         return componentManager;
     }
@@ -112,8 +187,11 @@ public class ECSManager {
         return entityManager;
     }
 
-	public BooleanSupplier isEntityAlive(int id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public SystemManager getSystemManager() {
+        return systemManager;
+    }
+
+    public DeferredCommandBuffer commands() {
+        return commandBuffer;
+    }
 }

@@ -6,4 +6,6 @@ public abstract class SystemBase {
      * Use thread-safe data structures or deferred operations.
      */
     public abstract void update(ECSManager ecs, float deltaTime);
+
+	protected abstract void shutdown();
 }

@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import audio.dsp.BusMixer;
 
 import java.util.*;
+
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class BusMixerTest {
