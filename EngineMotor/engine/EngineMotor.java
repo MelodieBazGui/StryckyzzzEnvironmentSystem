@@ -2,6 +2,7 @@ package engine;
 
 import ecs.*;
 import ecs.components.GraphicComponent;
+import ecs.components.TransformComponent;
 import graphics.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;

@@ -1,19 +1,32 @@
 package graphics;
 
-import com.jogamp.opengl.*;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
+import java.util.concurrent.atomic.AtomicReference;
+
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL4;
+import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLCapabilities;
+import com.jogamp.opengl.GLEventListener;
+import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLCanvas;
 
-import java.nio.FloatBuffer;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
+
 
 /**
  * Lightweight JOGL renderer.
- * 
  * Does NOT rely on FPSAnimator or external GLUtils.
- * Provides minimal utilities for shaders, program linking, and VAO drawing.
  */
 public final class Renderer implements GLEventListener {
+    private static final ThreadLocal<FloatBuffer> TL_FB16 =
+        ThreadLocal.withInitial(() ->
+            ByteBuffer.allocateDirect(16 * Float.BYTES)
+                      .order(ByteOrder.nativeOrder())
+                      .asFloatBuffer()
+        );
+
     private final AtomicReference<FrameData> frameRef;
 
     private GLCanvas canvas;
@@ -60,12 +73,12 @@ public final class Renderer implements GLEventListener {
         gl.glClearColor(0f, 0f, 0f, 1f);
 
         // --- Compile and link shaders ---
-        int vs = compileShader(gl, GL4.GL_VERTEX_SHADER, ShaderSources.VS);
-        int fs = compileShader(gl, GL4.GL_FRAGMENT_SHADER, ShaderSources.FS);
+        int vs = compileShader(gl, GL4.GL_VERTEX_SHADER, ShaderSources.DEFAULT_VS);
+        int fs = compileShader(gl, GL4.GL_FRAGMENT_SHADER, ShaderSources.DEFAULT_FS);
         program = linkProgram(gl, vs, fs);
 
-        uProj = gl.glGetUniformLocation(program, "uProj");
-        uView = gl.glGetUniformLocation(program, "uView");
+        uProj  = gl.glGetUniformLocation(program, "uProj");
+        uView  = gl.glGetUniformLocation(program, "uView");
         uModel = gl.glGetUniformLocation(program, "uModel");
         uColor = gl.glGetUniformLocation(program, "uColor");
     }
@@ -79,16 +92,36 @@ public final class Renderer implements GLEventListener {
         gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
         gl.glUseProgram(program);
 
-        // Upload camera matrices
-        gl.glUniformMatrix4fv(uProj, 1, false, fd.camera.projection, 0);
-        gl.glUniformMatrix4fv(uView, 1, false, fd.camera.view, 0);
+        // Upload camera matrices using FloatBuffer overload (portable)
+        FloatBuffer fb = TL_FB16.get();
+
+        fb.clear();
+        fb.put(fd.camera.projection.toColumnMajorArray()).flip();
+        gl.glUniformMatrix4fv(uProj, 1, false, fb);
+
+        fb.clear();
+        fb.put(fd.camera.view.toColumnMajorArray()).flip();
+        gl.glUniformMatrix4fv(uView, 1, false, fb);
 
         // Draw all objects
         for (DrawItem item : fd.drawList) {
             if (item == null || item.model == null) continue;
 
             int mode = toGLMode(item.mode);
-            gl.glUniformMatrix4fv(uModel, 1, false, item.transform.model, 0);
+
+            // per-mode state
+            switch (item.mode) {
+                case LINES -> gl.glLineWidth(item.lineWidth <= 0f ? 1f : item.lineWidth);
+                case POINTS -> gl.glPointSize(item.pointSize <= 0f ? 1f : item.pointSize);
+                default -> { /* TRIANGLES: nothing special */ }
+            }
+
+            // Model matrix (column-major) -> upload
+            fb.clear();
+            fb.put(item.modelMatrixColumnMajor()).flip();
+            gl.glUniformMatrix4fv(uModel, 1, false, fb);
+
+            // Color
             gl.glUniform4f(uColor, 1f, 1f, 1f, 1f);
 
             gl.glBindVertexArray(item.model.vao);

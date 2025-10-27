@@ -25,7 +25,8 @@ public final class ECSManager {
     private final IdRegistry<Entity> entities = new IdRegistry<>();
     private final ComponentManager componentManager = new ComponentManager();
     private final EntityManager entityManager = new EntityManager();
-    private final SystemManager systemManager = new SystemManager();
+    ExecutorService es = new ForkJoinPool(Runtime.getRuntime().availableProcessors() - 2);
+    private final SystemManager systemManager = new SystemManager(((Runtime) es).availableProcessors());
     private final DeferredCommandBuffer commandBuffer = new DeferredCommandBuffer();
 
     // === Systems ===

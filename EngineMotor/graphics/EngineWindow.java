@@ -1,6 +1,9 @@
 package graphics;
-import com.jogamp.opengl.*;
+
 import com.jogamp.newt.opengl.GLWindow;
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GLCapabilities;
+import com.jogamp.opengl.GLProfile;
 
 public final class EngineWindow {
 
