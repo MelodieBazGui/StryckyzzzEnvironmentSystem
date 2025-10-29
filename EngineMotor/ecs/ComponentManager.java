@@ -60,6 +60,16 @@ public class ComponentManager {
         ComponentPool<T> pool = getOrCreatePool(type);
         return pool != null ? pool.entries() : Collections.emptyList();
     }
+    
+    /**
+     * Removes all components belonging to a specific entity across all pools.
+     */
+    public void removeAllComponents(int entityId) {
+        for (ComponentPool<? extends Component> pool : pools.values()) {
+            pool.remove(entityId);
+        }
+    }
+
 
     /**
      * Clears all pools (used when resetting the ECS).

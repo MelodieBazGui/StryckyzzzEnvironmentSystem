@@ -1,33 +1,27 @@
 package ecs;
 
-import engine.IdRegistry;
+import ecs.systems.*;
 import utils.Logger;
 
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.BooleanSupplier;
 
-import ecs.systems.EntityManager;
-import ecs.systems.SystemManager;
-
 /**
  * Thread-safe ECS core:
- * - Entity registry and ID management
+ * - Entity creation/destruction through EntityManager
  * - Component storage and retrieval
- * - Deferred command buffer (safe modifications after system updates)
- * - Parallel system updates using a fixed thread pool
- * - Complies with existing MovementSystem and ECS API structure
+ * - Deferred command buffer
+ * - Parallel system updates
  */
 public final class ECSManager {
     private static final Logger logger = new Logger(ECSManager.class);
 
     // === Core Managers ===
-    private final IdRegistry<Entity> entities = new IdRegistry<>();
-    private final ComponentManager componentManager = new ComponentManager();
     private final EntityManager entityManager = new EntityManager();
-    ExecutorService es = new ForkJoinPool(Runtime.getRuntime().availableProcessors() - 2);
-    private final SystemManager systemManager = new SystemManager(((Runtime) es).availableProcessors());
-    private final DeferredCommandBuffer commandBuffer = new DeferredCommandBuffer();
+    private final ComponentManager componentManager = new ComponentManager();
+    private final SystemManager systemManager = new SystemManager(Runtime.getRuntime().availableProcessors());
+    private final DeferredCommandBuffer commandBuffer = new DeferredCommandBuffer(this);
 
     // === Systems ===
     private final List<SystemBase> systems = new CopyOnWriteArrayList<>();
@@ -43,44 +37,51 @@ public final class ECSManager {
     // -------------------------------------------------------------------------
     // Entity API
     // -------------------------------------------------------------------------
+    /** Create and register a new entity in the ECS. */
     public Entity createEntity() {
         Entity e = new Entity();
-        registerEntity(e);
+        entityManager.addEntity(e);
+        logger.info("Created Entity ID: " + e.getId());
         return e;
     }
+    
+	public void registerEntity(Entity e) {
+		entityManager.addEntity(e);
+        logger.info("Created Entity ID: " + e.getId());
+	}
 
-    protected void registerEntity(Entity e) {
-        entities.register(e);
-        entityManager.addEntity(e);
+    /** Destroy an entity and remove all its components. */
+    public void destroyEntity(Entity e) {
+        if (e == null) return;
+        componentManager.removeAllComponents(e.getId());
+        entityManager.removeEntity(e);
+        logger.info("Destroyed Entity ID: " + e.getId());
     }
 
-    public void destroyEntity(int id) {
-        componentManager.removeAllComponents(id);
-        entities.unregister(id);
-        entityManager.removeEntity(id);
+    /** Check whether an entity is currently alive. */
+    public boolean isAlive(Entity e) {
+        return entityManager.isAlive(e);
     }
 
-    public boolean isAlive(int id) {
-        return entities.contains(id);
+    /** Returns a lambda to safely check entity lifetime later. */
+    public BooleanSupplier isEntityAlive(Entity e) {
+        return () -> entityManager.isAlive(e);
     }
 
-    public BooleanSupplier isEntityAlive(int id) {
-        return () -> entities.contains(id);
-    }
-
+    /** Retrieve an entity by ID. */
     public Entity getEntity(int id) {
-        return entities.get(id);
+        return entityManager.getEntity(id);
     }
 
-    /** Snapshot of all current entities. Thread-safe copy. */
+    /** Snapshot of all current entities (thread-safe copy). */
     public List<Entity> getAllEntities() {
-        return new ArrayList<>(entities.values());
+        return new ArrayList<>(entityManager.getAllEntities());
     }
 
     /** Returns all entities that have ALL specified component types. */
     @SafeVarargs
     public final List<Entity> getEntitiesWith(Class<? extends Component>... types) {
-        Collection<Entity> src = entities.values();
+        Collection<Entity> src = entityManager.getAllEntities();
         if (src.isEmpty()) return Collections.emptyList();
 
         List<Entity> out = new ArrayList<>(src.size());
@@ -119,7 +120,7 @@ public final class ECSManager {
     // -------------------------------------------------------------------------
     public void addSystem(SystemBase system) {
         systems.add(system);
-        systemManager.addSystem(system);
+        systemManager.register(system);
         try {
             system.initialize(this);
         } catch (Throwable t) {
@@ -129,12 +130,10 @@ public final class ECSManager {
 
     public void removeSystem(SystemBase system) {
         systems.remove(system);
-        systemManager.removeSystem(system);
+        systemManager.unregister(system);
     }
 
-    /**
-     * Runs all systems (parallel if possible), then flushes deferred commands.
-     */
+    /** Runs all systems (parallel if possible), then flushes deferred commands. */
     public void update(float dt) {
         if (systems.isEmpty()) return;
 
@@ -157,7 +156,6 @@ public final class ECSManager {
             logger.error("ECS update interrupted", ie);
         }
 
-        // Apply deferred add/remove component/entity commands
         try {
             commandBuffer.flush();
         } catch (Throwable t) {
@@ -165,6 +163,7 @@ public final class ECSManager {
         }
     }
 
+    /** Gracefully shuts down all systems and worker threads. */
     public void shutdown() {
         for (SystemBase s : systems) {
             try {
@@ -195,4 +194,5 @@ public final class ECSManager {
     public DeferredCommandBuffer commands() {
         return commandBuffer;
     }
+
 }

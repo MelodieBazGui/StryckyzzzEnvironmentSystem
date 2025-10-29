@@ -40,13 +40,13 @@ public final class Renderer implements GLEventListener {
     public Renderer(AtomicReference<FrameData> frameRef) {
         this.frameRef = frameRef;
     }
-
+    
     // -------------------------------------------------------------------------
     // Create Canvas (you can manually call display() yourself)
     // -------------------------------------------------------------------------
     public GLCanvas createCanvas(int width, int height) {
         profile = GLProfile.get(GLProfile.GL4);
-        caps = new GLCapabilities(profile);
+        caps = new GLCapabilities(GLProfile.get(GLProfile.GL4));
         caps.setHardwareAccelerated(true);
         caps.setDepthBits(24);
         caps.setDoubleBuffered(true);

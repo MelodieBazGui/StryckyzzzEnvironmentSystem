@@ -109,4 +109,9 @@ public class SystemManager {
         deferredCommands.clear();
         logger.info("SystemManager shut down cleanly.");
     }
+
+	public boolean isEmpty() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

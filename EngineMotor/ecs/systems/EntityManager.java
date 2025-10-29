@@ -1,32 +1,48 @@
 package ecs.systems;
 
+import ecs.Entity;
 import engine.IdRegistry;
+import java.util.*;
 
 /**
- * Manages all entity IDs in the ECS.
- * Provides creation, destruction, and alive status tracking.
+ * Manages all entity instances and their IDs.
+ * Provides creation, removal, and alive-state checks.
  */
 public class EntityManager {
-    private final IdRegistry<Integer> registry = new IdRegistry<>();
+    private final IdRegistry<Entity> registry = new IdRegistry<>();
 
-    /** Create a new entity and return its ID */
-    public int createEntity() {
-        int id = registry.register(0);
-        return id;
+    /** Register an entity by its own ID. */
+    public void addEntity(Entity e) {
+        registry.register(e.getId(), e);
     }
 
-    /** Destroy an entity by ID */
-    public void destroyEntity(int id) {
-        registry.unregister(id);
+    /** Remove an entity by object. */
+    public void removeEntity(Entity e) {
+        registry.unregister(e);
     }
 
-    /** Check whether an entity ID is alive */
-    public boolean isAlive(int id) {
-        return registry.isActive(id);
+    /** Check if an entity is alive (by object reference). */
+    public boolean isAlive(Entity e) {
+        return registry.contains(e);
     }
 
-    /** Return the number of active entities */
+    /** Retrieve an entity by ID. */
+    public Entity getEntity(int id) {
+        return registry.get(id);
+    }
+
+    /** Retrieve all active entities. */
+    public Collection<Entity> getAllEntities() {
+        return new ArrayList<>(registry.values());
+    }
+
+    /** Number of active entities. */
     public int count() {
         return registry.size();
+    }
+
+    /** Clear all registered entities. */
+    public void clear() {
+        registry.clear();
     }
 }

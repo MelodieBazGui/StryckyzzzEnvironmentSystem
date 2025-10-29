@@ -1,10 +1,11 @@
 package audioTest;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.Test;
 
 import audio.dsp.DynamicRangeCompressor;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 public class DynamicRangeCompressorTest {
 
